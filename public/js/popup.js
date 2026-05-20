@@ -13,7 +13,6 @@ function new_popup(text, popup_type) {
     popup = document.getElementsByClassName("popup")[0];        // Get the new popup
     let close = document.getElementsByClassName("close")[0];    // Get the close button
 
-    popup_place();                                              // Place the popup at the top of the page
     
     close.onclick = () => delete_popup(popup);
     setTimeout(() => {
@@ -27,12 +26,3 @@ function delete_popup(popup) {
         popup.remove();
     }, 600);
 }
-
-function popup_place() {
-    let popup = document.getElementsByClassName("popup")[0];
-    if (popup) {
-        popup.style.top = `${window.scrollY+10}px`;
-    }
-}
-
-window.addEventListener('scroll', popup_place);
