@@ -222,5 +222,5 @@ function open_new_operation_tab() {
     note = note.replace(/(?:\r\n|\r|\n)/g, '\\n');
     console.log(note);
 
-    window.open(`/operations?note=${note}`);
+    window.open(`/app/operations?note=${note}`);
 }
