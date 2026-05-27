@@ -83,8 +83,8 @@ header #navicon {
     margin-top: auto;
     height: auto;
   }
-  li:last-child a span {
-    font-size: 3em;
+  #settings-menu {
+    font-size: 2em;
   }
 }
 #side-menu .corner {
