@@ -8,8 +8,19 @@ const create_account_button = document.getElementById("create-account");
 const total_sold = document.getElementById("total-sold");
 let transfer_data = [null, null];
 
-window.addEventListener('resize', undo_transfer());
 function f_onload() { onload(); }
+
+// Reposition selected cards on resize/zoom
+window.addEventListener('resize', reposition_transfer_cards);
+
+// Zoom doesn't always fire 'resize'; observe the table (changes on zoom, not on transform) to avoid a loop
+window.addEventListener('DOMContentLoaded', () => {
+    let target = document.querySelector(".responsive-table");
+    if (target && window.ResizeObserver) {
+        let observer = new ResizeObserver(() => reposition_transfer_cards());
+        observer.observe(target);
+    }
+});
 
 onload = () => {
     datasheet.innerHTML = "";
@@ -59,8 +70,7 @@ onload = () => {
 
 function manage_account_transfer(id) {
     if ((transfer_data[0] == id) || (transfer_data[1] == id)) {
-        document.getElementById("card-" + id).style = "";
-
+        transfer_animation_off(id);
         if (transfer_data[0] == id) {
             transfer_data[0] = null;
         }
@@ -80,21 +90,48 @@ function manage_account_transfer(id) {
     document.getElementById("transfer-field").disabled = ((transfer_data[0] == null) || (transfer_data[1] == null));
 }
 
-function transfer_animation_on(id, postion) {
+// animate: true on click (slide), false on zoom (instant, avoids jitter)
+function transfer_animation_on(id, postion, animate = true) {
     let card = document.getElementById("card-" + id);
 
-    // get postion balise from-account
-    let from_account_position = document.getElementById(`selected-account-${postion}`).getBoundingClientRect();
+    if (!animate) {
+        card.style.transition = "none";
+    }
+
+    // Reset + set final width before measuring so the offset is correct
+    card.style.transform = "";
+    card.style.width = "90%";
+    card.offsetWidth; // force reflow
+
+    let slot_position = document.getElementById(`selected-account-${postion}`).getBoundingClientRect();
     let card_position = card.getBoundingClientRect();
 
-    // make diff
-    let x = from_account_position.x - card_position.x;
-    let y = from_account_position.y - card_position.y;
+    let x = slot_position.x - card_position.x;
+    let y = slot_position.y - card_position.y;
 
     card.style.transform = `translate(${x}px, ${y}px)`;
 
-    // Adapte size
-    card.style.width = "90%";
+    if (!animate) {
+        card.offsetWidth;
+        card.style.transition = "";
+    }
+}
+
+// Reposition selected cards without animation (on zoom/resize)
+function reposition_transfer_cards() {
+    if (transfer_data[0] != null) {
+        transfer_animation_on(transfer_data[0], 0, false);
+    }
+    if (transfer_data[1] != null) {
+        transfer_animation_on(transfer_data[1], 1, false);
+    }
+}
+
+// Reset card to its original position
+function transfer_animation_off(id) {
+    let card = document.getElementById("card-" + id);
+    card.style.transform = "";
+    card.style.width = "";
 }
 
 function process_transfer() {
@@ -147,10 +184,10 @@ function get_account_shortname() {
 
 function undo_transfer() {
     if (transfer_data[0] != null) {
-        document.getElementById("card-" + transfer_data[0]).style = "";
+        transfer_animation_off(transfer_data[0]);
     }
     if (transfer_data[1] != null) {
-        document.getElementById("card-" + transfer_data[1]).style = "";
+        transfer_animation_off(transfer_data[1]);
     }
     transfer_data = [null, null];
     document.getElementById("transfer-field").disabled = true;

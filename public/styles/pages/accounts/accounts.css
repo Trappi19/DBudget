@@ -45,6 +45,11 @@
   margin: 10px 0;
 }
 
+.responsive-table .table-row[style*="transform"] {
+  position: relative;
+  z-index: 10;
+}
+
 #create-account-field {
   display: none;
   background-color: #f5f5f5;
@@ -85,4 +90,4 @@
   .back-table-row {
     height: 5px !important;
   }
-}/*# sourceMappingURL=accounts.css.map */
+}
