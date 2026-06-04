@@ -19,6 +19,10 @@ onload = () => {
     account_list.addEventListener("change", sync_account_selection);
     account_list.addEventListener("change", creating_operation_pannel);
 
+    document.getElementById("filter-toggle").addEventListener("click", () => {
+        document.getElementById("filter-dropdown").classList.toggle("open");
+    });
+
     date_to_search.valueAsDate = new Date();
     operation_date.valueAsDate = new Date();
 }

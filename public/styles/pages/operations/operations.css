@@ -99,4 +99,113 @@
   .flex-inline {
     flex-direction: column;
   }
-}/*# sourceMappingURL=operations.css.map */
+
+  #search-filters {
+    position: relative;
+    width: 100% !important;
+  }
+  #search-filters-left {
+    width: 100% !important;
+  }
+  #search-filters #filter-dropdown {
+    position: absolute;
+    top: calc(100% + 4px);
+    right: 0;
+    width: 60%;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+    background-color: #fff;
+    border: 1px solid #c4c4c4;
+    border-radius: 5px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.12);
+    padding: 8px;
+    z-index: 100;
+    overflow: hidden;
+    transform-origin: top center;
+    transform: scaleY(0);
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition: transform 0.25s ease, opacity 0.25s ease, visibility 0s linear 0.25s;
+  }
+  #search-filters #filter-dropdown.open {
+    transform: scaleY(1);
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+    transition: transform 0.25s ease, opacity 0.25s ease, visibility 0s linear 0s;
+  }
+  #search-filters #filter-dropdown select,
+  #search-filters #filter-dropdown input[type=date] {
+    width: 100%;
+    flex: unset;
+    box-sizing: border-box;
+  }
+  #search-filters #filter-dropdown {
+    width: 50% !important;
+  }
+}
+#search-filters {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+  width: 100%;
+}
+#search-filters-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+  width: 40%;
+}
+#search-filters-left #search-label {
+  flex: 1 1 0;
+  min-width: 0;
+  padding: 10px 12px;
+}
+#search-filters #filter-toggle {
+  border: 1px solid #c4c4c4;
+  border-radius: 5px;
+  background-color: #fff;
+  padding: 4px 10px;
+  box-shadow: inset 0 3px 6px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  flex-shrink: 0;
+}
+#search-filters #filter-toggle:hover {
+  background-color: #ececec;
+}
+@media (min-width: 768px) {
+  #search-filters #filter-dropdown {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    overflow: hidden;
+    width: 0;
+    opacity: 0;
+    pointer-events: none;
+    transition: width 0.35s ease, opacity 0.25s ease;
+  }
+  #search-filters #filter-dropdown.open {
+    width: 60%;
+    opacity: 1;
+    pointer-events: auto;
+  }
+  #search-filters #filter-dropdown select,
+  #search-filters #filter-dropdown input[type=date] {
+    flex: 1 1 0;
+    min-width: 0;
+    padding: 10px 8px;
+  }
+}
+
+#no-result {
+  justify-content: center;
+  color: #888;
+  font-style: italic;
+}
+
+/*# sourceMappingURL=operations.css.map */

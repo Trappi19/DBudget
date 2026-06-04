@@ -1,9 +1,27 @@
-
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0&icon_names=filter_alt" />
 <link rel="stylesheet" href="/public/styles/pages/operations/operations.css">
 <link rel="stylesheet" href="/public/styles/table/table.css">
 
 <section class="dashboard">
     <section class="container">
+
+        <section id="search-filters">
+            <div id="search-filters-left">
+                <input type="text" name="search-label" id="search-label" placeholder="Rechercher un label...">
+                <button type="button" id="filter-toggle"><span class="material-symbols-outlined">filter_alt</span></button>
+            </div>
+            <div id="filter-dropdown">
+                <select name="balance-view" id="balance-view">
+                    <option value="0">Tous les comptes</option>
+                </select>
+                <select name="filter-type" id="filter-type">
+                    <option value="0">Tous les types</option>
+                </select>
+                <input type="date" name="date-to-search" id="date-to-search">
+            </div>
+            <input type="text" name="balance" id="balance" placeholder="Balance" disabled style="display:none;">
+        </section>
+
         <ul class="responsive-table">
             <li class="table-header">
                 <div class="col col-1">Date</div>
@@ -22,13 +40,11 @@
                         <div class="col col-5" data-label="Actions"></div>
                     </li>
                 <?php endfor; ?>
+                <li id="no-result" class="table-row" style="display:none;">
+                    <div style="width:100%; text-align:center;">Aucune opération</div>
+                </li>
             </div>
         </ul>
-        <input type="date" name="date-to-search" id="date-to-search" onchange="update_datasheet()">
-        <select name="balance-view" id="balance-view" onchange="update_datasheet()">
-            <option value="0"> Select an account </option>
-        </select>
-        <input type="text" name="balance" id="balance" placeholder="Balance" disabled>
     </section>
 
     <section id="add-pannel" class="container">
