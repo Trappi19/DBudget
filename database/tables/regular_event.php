@@ -23,7 +23,8 @@ class RegularEvent
         $result = $query->fetch();
 
         if (!$result) {
-            echo header("HTTP/1.1 404");
+            http_response_code(404);
+            echo json_encode(['code' => 404, 'message' => 'Event not found']);
             exit;
         }
 

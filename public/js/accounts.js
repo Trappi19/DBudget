@@ -15,10 +15,10 @@ onload = () => {
     datasheet.innerHTML = "";
     date.valueAsDate = new Date();
     var xhr = new XMLHttpRequest();
-    xhr.open("GET", "/api/get/accounts", false);
+    xhr.open("GET", "/api/v1/accounts", true);
     xhr.onload = () => {
-        if (xhr.status == 200) {
-            let accounts = JSON.parse(xhr.responseText);
+        if (Math.floor(xhr.status / 100) === 2) {
+            let accounts = JSON.parse(xhr.responseText).data;
 
             if (accounts.length == 0) {
                 datasheet.innerHTML = `<li class="table-row">
@@ -29,6 +29,7 @@ onload = () => {
                         <div class="col col-4" data-label="Actions"> </div>
                     </tr>`;
                 new_popup("There is no account yet", "info");
+                document.getElementById("loading-gif").style.display = "none";
                 return;
             }
 
@@ -51,9 +52,9 @@ onload = () => {
         else {
             new_popup("Error getting accounts", "error")
         }
+        document.getElementById("loading-gif").style.display = "none";
     };
     xhr.send();
-    document.getElementById("loading-gif").style.display = "none";
 }
 
 function manage_account_transfer(id) {
@@ -104,9 +105,11 @@ function process_transfer() {
         label_val = label.value == "" ? get_account_shortname() : label.value;
 
         var xhr = new XMLHttpRequest();
-        xhr.open("GET", `/api/create/transaction?from=${transfer_data[0]}&to=${transfer_data[1]}&label=${encodeURIComponent(label_val)}&date=${date.value}&amount=${amount.value}`, false);
+        xhr.open("POST", `/api/v1/operations/transaction`, false);
+        xhr.setRequestHeader("Content-Type", "application/json");
+
         xhr.onload = () => {
-            if (xhr.status == 200) {
+            if (Math.floor(xhr.status / 100) === 2) {
                 new_popup("Transaction process", "success");
                 undo_transfer();
             }
@@ -114,7 +117,7 @@ function process_transfer() {
                 new_popup("Error process transaction", "error")
             }
         }
-        xhr.send();
+        xhr.send(JSON.stringify({ from: transfer_data[0], to: transfer_data[1], label: label_val, date: date.value, amount: amount.value }));
         f_onload();
     }
 }
@@ -174,9 +177,10 @@ function create_account() {
             }
 
             var xhr = new XMLHttpRequest();
-            xhr.open("GET", `/api/create/account?label=${encodeURIComponent(acc_label.value)}&type=${acc_type.value}&sold=${acc_sold.value}`, true);
+            xhr.open("POST", `/api/v1/accounts`, true);
+            xhr.setRequestHeader("Content-Type", "application/json");
             xhr.onload = () => {
-                if (xhr.status == 200) {
+                if (Math.floor(xhr.status / 100) === 2) {
                     new_popup("Account created", "success");
                     acc_label.value = "";
                     acc_sold.value = "";
@@ -188,7 +192,7 @@ function create_account() {
                     new_popup("Error creating account", "error")
                 }
             }
-            xhr.send();
+            xhr.send(JSON.stringify({ label: acc_label.value, type: acc_type.value, sold: acc_sold.value }));
         }
     }
 }
@@ -228,9 +232,10 @@ function confirm_edit_element(label, sold, type, id) {
     }
     else {
         var xhr = new XMLHttpRequest();
-        xhr.open("GET", `/api/update/account?id=${id}&label=${encodeURIComponent(label)}&sold=${sold}&type=${type}`, true);
+        xhr.open("PATCH", `/api/v1/accounts`, true);
+        xhr.setRequestHeader("Content-Type", "application/json");
         xhr.onload = () => {
-            if (xhr.status == 200) {
+            if (Math.floor(xhr.status / 100) === 2) {
                 new_popup("Account updated", "success");
                 onload();
             }
@@ -238,7 +243,7 @@ function confirm_edit_element(label, sold, type, id) {
                 new_popup("Error updating account", "error")
             }
         }
-        xhr.send();
+        xhr.send(JSON.stringify({ id, label, sold, type }));
     }
 }
 
@@ -260,9 +265,10 @@ function confirm_popup_delete_element(id, label) {
 
 function delete_element(id) {
     var xhr = new XMLHttpRequest();
-    xhr.open("GET", `/api/delete/account?id=${id}`, true);
+    xhr.open("DELETE", `/api/v1/accounts`, true);
+    xhr.setRequestHeader("Content-Type", "application/json");
     xhr.onload = () => {
-        if (xhr.status == 200) {
+        if (Math.floor(xhr.status / 100) === 2) {
             new_popup("Account deleted", "success");
             onload();
         }
@@ -270,9 +276,5 @@ function delete_element(id) {
             new_popup("Error deleting account", "error")
         }
     }
-    xhr.send();
-
-    setTimeout(() => {
-        undo_transfer();
-    }, 1);
+    xhr.send(JSON.stringify({ id }));
 }

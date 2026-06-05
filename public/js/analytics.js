@@ -25,10 +25,10 @@ window.addEventListener('resize', () => {
 
 function set_operation_type_list() {
     let xhr = new XMLHttpRequest();
-    xhr.open("GET", "/api/get/operation-types", false);
+    xhr.open("GET", "/api/v1/operations/types", false);
     xhr.onload = () => {
-        if (xhr.status == 200) {
-            operation_type_list = JSON.parse(xhr.responseText);
+        if (Math.floor(xhr.status / 100) === 2) {
+            operation_type_list = JSON.parse(xhr.responseText).data;
 
             for (let i = 0; i < 9; i++) {
                 pie_labels[i] = operation_type_list[i].title;
@@ -139,11 +139,11 @@ onload = () => {
 
 function fill_account_list() {
     var xhr = new XMLHttpRequest();
-    xhr.open("GET", "/api/get/accounts", true);
+    xhr.open("GET", "/api/v1/accounts", true);
     xhr.onload = () => {
-        if (xhr.status == 200) {
-            accounts = xhr.responseText;
-            accounts_list = JSON.parse(xhr.responseText);
+        if (Math.floor(xhr.status / 100) === 2) {
+            accounts_list = JSON.parse(xhr.responseText).data;
+            accounts = JSON.stringify(accounts_list);
 
             if (accounts_list.length == 0) {
                 new_popup("There is no account yet", "info");
@@ -193,10 +193,10 @@ function selected_account_change() {
 
 function get_operations() {
     let xhr = new XMLHttpRequest();
-    xhr.open("GET", `/api/get/operations-account?id_account=${selected_account.id_account}&start=${analytics_start.value}&end=${analytics_end.value}`, true);
+    xhr.open("GET", `/api/v1/accounts/operations?id_account=${selected_account.id_account}&start=${analytics_start.value}&end=${analytics_end.value}`, true);
     xhr.onload = () => {
-        if (xhr.status == 200) {
-            operations = JSON.parse(xhr.responseText);
+        if (Math.floor(xhr.status / 100) === 2) {
+            operations = JSON.parse(xhr.responseText).data;
 
             if (operations.length == 0) {
                 new_popup("There is no operation in this period", "info");
@@ -204,10 +204,10 @@ function get_operations() {
 
             // Security if there is no operation at the start of the chart
             let xhr2 = new XMLHttpRequest();
-            xhr2.open("GET", `/api/get/amount?id_account=${account_list.value}&date=${analytics_start.value}`, false);
+            xhr2.open("GET", `/api/v1/accounts/balance?id_account=${account_list.value}&date=${analytics_start.value}`, false);
             xhr2.onload = () => {
-                if (xhr2.status == 200) {
-                    operations.unshift({ ["date"]: analytics_start.value, ["new_sold"]: parseInt(xhr2.responseText) });
+                if (Math.floor(xhr2.status / 100) === 2) {
+                    operations.unshift({ ["date"]: analytics_start.value, ["new_sold"]: parseInt(JSON.parse(xhr2.responseText).data) });
                     operations.push({ ["date"]: analytics_end.value, ["new_sold"]: operations[operations.length - 1].new_sold });
                 }
                 else {

@@ -27,10 +27,10 @@ onload = () => {
 
 function set_operation_type_list() {
     let xhr = new XMLHttpRequest();
-    xhr.open("GET", "/api/get/operation-types", false);
+    xhr.open("GET", "/api/v1/operations/types", false);
     xhr.onload = () => {
-        if (xhr.status == 200) {
-            operation_type_list = JSON.parse(xhr.responseText);
+        if (Math.floor(xhr.status / 100) === 2) {
+            operation_type_list = JSON.parse(xhr.responseText).data;
         }
         else {
             new_popup("Error getting operation type list", "error");
@@ -72,18 +72,20 @@ function confirm_popup_delete_element(event_id) {
 }
 
 function delete_element(event_id) {
+    console.log(event_id);
     var xhr = new XMLHttpRequest();
-            xhr.open("GET", "/api/delete/event?id=" + event_id, true);
-            xhr.onload = () => {
-                if (xhr.status == 200) {
-                    update_datasheet();
-                    new_popup("Event deleted", "success");
-                }
-                else {
-                    new_popup("Error deleting operation", "error");
-                }
-            }
-        xhr.send();
+    xhr.open("DELETE", `/api/v1/events`, true);
+    xhr.setRequestHeader("Content-Type", "application/json");
+    xhr.onload = () => {
+        if (Math.floor(xhr.status / 100) === 2) {
+            update_datasheet();
+            new_popup("Event deleted", "success");
+        }
+        else {
+            new_popup("Error deleting operation", "error");
+        }
+    }
+    xhr.send(JSON.stringify({ id: event_id }));
 }
 
 function update_datasheet() {
@@ -91,10 +93,10 @@ function update_datasheet() {
     datasheet.innerHTML = "";
 
     let xhr = new XMLHttpRequest();
-    xhr.open("GET", "/api/get/events?accounts=" + accounts + "&date=" + date, true);
+    xhr.open("GET", "/api/v1/events?accounts=" + accounts + "&date=" + date, true);
     xhr.onload = () => {
-        if (xhr.status == 200) {
-            events = JSON.parse(xhr.responseText);
+        if (Math.floor(xhr.status / 100) === 2) {
+            events = JSON.parse(xhr.responseText).data;
             nb_events = events.length;
 
             if (nb_events == 0) {
@@ -156,11 +158,12 @@ function update_datasheet() {
 
 function fill_account_list() {
     var xhr = new XMLHttpRequest();
-    xhr.open("GET", "/api/get/accounts", true);
+    xhr.open("GET", "/api/v1/accounts", true);
     xhr.onload = () => {
-        if (xhr.status == 200) {
-            accounts = xhr.responseText;
-            accounts_list = JSON.parse(xhr.responseText);
+        if (Math.floor(xhr.status / 100) === 2) {
+            const response = JSON.parse(xhr.responseText);
+            accounts_list = response.data;
+            accounts = JSON.stringify(accounts_list);
 
             if (accounts_list.length == 0) {
                 new_popup("There is no account yet", "info");
@@ -199,15 +202,10 @@ function create_event() {
     }
     else {
         var xhr = new XMLHttpRequest();
-        xhr.open("GET", "/api/create/event?id_account=" + account_list.value +
-            "&label=" + encodeURIComponent(label) +
-            "&amount=" + amount +
-            "&category=" + category +
-            "&start=" + start +
-            "&end=" + end +
-            "&frequency=" + frequency, true);
+        xhr.open("POST", "/api/v1/events", true);
+        xhr.setRequestHeader("Content-Type", "application/json");
         xhr.onload = () => {
-            if (xhr.status == 200) {
+            if (Math.floor(xhr.status / 100) === 2) {
                 update_datasheet();
 
                 label_field.value = "";
@@ -223,7 +221,7 @@ function create_event() {
                 new_popup("Unknow error creating event", "error");
             }
         };
-        xhr.send();
+        xhr.send(JSON.stringify({ id_account: account_list.value, label, amount, category, start, end, frequency }));
     }
 }
 
@@ -308,9 +306,10 @@ function confirm_edit_element(label, amount, start, end, frequency, category, id
     else {
         element.parentNode.innerHTML = `<img src="/assets/images/load.gif" alt="load" class="card-button">`;
         var xhr = new XMLHttpRequest();
-        xhr.open("GET", `/api/update/event?label=${encodeURIComponent(label)}&amount=${amount}&start=${start}&end=${end}&frequency=${frequency}&category=${category}&id=${id}`, true);
+        xhr.open("PATCH", `/api/v1/events`, true);
+        xhr.setRequestHeader("Content-Type", "application/json");
         xhr.onload = () => {
-            if (xhr.status == 200) {
+            if (Math.floor(xhr.status / 100) === 2) {
                 new_popup("Event updated", "success");
                 fill_account_list();
             }
@@ -318,6 +317,6 @@ function confirm_edit_element(label, amount, start, end, frequency, category, id
                 new_popup("Error updating event", "error")
             }
         }
-        xhr.send();
+        xhr.send(JSON.stringify({ id, label, amount, start, end, frequency, category }));
     }
 }

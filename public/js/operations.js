@@ -68,10 +68,10 @@ function add_notes() {
 
 function set_operation_type_list() {
     let xhr = new XMLHttpRequest();
-    xhr.open("GET", "/api/get/operation-types", false);
+    xhr.open("GET", "/api/v1/operations/types", false);
     xhr.onload = () => {
-        if (xhr.status == 200) {
-            operation_type_list = JSON.parse(xhr.responseText);
+        if (Math.floor(xhr.status / 100) === 2) {
+            operation_type_list = JSON.parse(xhr.responseText).data;
         }
         else {
             new_popup("Error getting operation type list", "error");
@@ -111,18 +111,19 @@ function confirm_popup_delete_element(element_id) {
 
 function delete_element(element_id) {
     document.getElementById("loading-gif").style.display = "flex";
-            var xhr = new XMLHttpRequest();
-            xhr.open("GET", "/api/delete/operation?id=" + element_id, true);
-            xhr.onload = () => {
-                if (xhr.status == 200) {
-                    new_popup("Operation deleted", "success");
-                    update_datasheet();
-                }
-                else {
-                    new_popup("Error deleting operation", "error")
-                }
-            }
-        xhr.send();
+    var xhr = new XMLHttpRequest();
+    xhr.open("DELETE", `/api/v1/operations`, true);
+    xhr.setRequestHeader("Content-Type", "application/json");
+    xhr.onload = () => {
+        if (Math.floor(xhr.status / 100) === 2) {
+            new_popup("Operation deleted", "success");
+            update_datasheet();
+        }
+        else {
+            new_popup("Error deleting operation", "error")
+        }
+    }
+    xhr.send(JSON.stringify({ id: element_id }));
 }
 
 function datasheet_clear() {
@@ -153,10 +154,10 @@ function update_datasheet() {
     datasheet_clear();
 
     let xhr = new XMLHttpRequest();
-    xhr.open("GET", "/api/get/operations?accounts=" + JSON.stringify(temp_account) + "&limit=14&date=" + date, false);
+    xhr.open("GET", "/api/v1/operations?accounts=" + JSON.stringify(temp_account) + "&limit=14&date=" + date, false);
     xhr.onload = () => {
-        if (xhr.status == 200) {
-            operations = JSON.parse(xhr.responseText);
+        if (Math.floor(xhr.status / 100) === 2) {
+            operations = JSON.parse(xhr.responseText).data;
             nb_operations = operations.length;
 
             if (nb_operations == 0) {
@@ -191,10 +192,10 @@ function update_datasheet() {
 
 function fill_account_list() {
     var xhr = new XMLHttpRequest();
-    xhr.open("GET", "/api/get/accounts", true);
+    xhr.open("GET", "/api/v1/accounts", true);
     xhr.onload = () => {
-        if (xhr.status == 200) {
-            accounts = JSON.parse(xhr.responseText);
+        if (Math.floor(xhr.status / 100) === 2) {
+            accounts = JSON.parse(xhr.responseText).data;
             if (accounts.length == 0) {
                 new_popup("There is no account yet", "info");
                 document.getElementById("add-field").disabled = true;
@@ -243,13 +244,10 @@ function create_operation() {
     else {
         document.getElementById("loading-gif").style.display = "flex";
         var xhr = new XMLHttpRequest();
-        xhr.open("GET", "/api/create/operation?id_account=" + account_list.value +
-            "&label=" + encodeURIComponent(label) +
-            "&amount=" + amount +
-            "&category=" + category +
-            "&date=" + operation_date.value, true);
+        xhr.open("POST", "/api/v1/operations", true);
+        xhr.setRequestHeader("Content-Type", "application/json");
         xhr.onload = () => {
-            if (xhr.status == 200) {
+            if (Math.floor(xhr.status / 100) === 2) {
                 update_datasheet();
                 document.getElementById("label").value = "";
                 document.getElementById("amount").value = "";
@@ -260,16 +258,16 @@ function create_operation() {
                 new_popup("Unknow error creating operations", "error");
             }
         };
-        xhr.send();
+        xhr.send(JSON.stringify({ id_account: account_list.value, label, amount, category, date: operation_date.value }));
     }
 }
 
 function show_balance(id_account) {
     let xhr = new XMLHttpRequest();
-    xhr.open("GET", `/api/get/amount?id_account=${id_account}&date=${date_to_search.value}`, false);
+    xhr.open("GET", `/api/v1/accounts/balance?id_account=${id_account}&date=${date_to_search.value}`, false);
     xhr.onload = () => {
-        if (xhr.status == 200) {
-            balance.value = JSON.parse(xhr.responseText) + " €";
+        if (Math.floor(xhr.status / 100) === 2) {
+            balance.value = JSON.parse(xhr.responseText).data + " €";
         }
         else {
             new_popup("Error getting balance", "error");

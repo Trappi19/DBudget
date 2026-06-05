@@ -18,7 +18,8 @@ class User
         $result = $query->fetch();
 
         if (!$result) {
-            echo header("HTTP/1.1 401");
+            http_response_code(404);
+            echo json_encode(['code' => 404, 'message' => 'User not found']);
             exit;
         }
 

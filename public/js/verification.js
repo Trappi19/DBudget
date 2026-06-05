@@ -50,10 +50,10 @@ function update_brief() {
 
 function fill_account_lists() {
     var xhr = new XMLHttpRequest();
-    xhr.open("GET", "/api/get/accounts", true);
+    xhr.open("GET", "/api/v1/accounts", true);
     xhr.onload = () => {
-        if (xhr.status == 200) {
-            accounts = JSON.parse(xhr.responseText);
+        if (Math.floor(xhr.status / 100) === 2) {
+            accounts = JSON.parse(xhr.responseText).data;
 
             if (accounts.length == 0) {
                 new_popup("There is no account yet", "info");
@@ -74,10 +74,10 @@ function fill_account_lists() {
 
 function set_operation_type_list() {
     let xhr = new XMLHttpRequest();
-    xhr.open("GET", "/api/get/operation-types?type=0", false);
+    xhr.open("GET", "/api/v1/operations/types?type=0", false);
     xhr.onload = () => {
-        if (xhr.status == 200) {
-            operation_type_list = JSON.parse(xhr.responseText);
+        if (Math.floor(xhr.status / 100) === 2) {
+            operation_type_list = JSON.parse(xhr.responseText).data;
         }
         else {
             new_popup("Error getting operation type list", "error");
@@ -119,10 +119,10 @@ function update_datasheet() {
         datasheet.innerHTML = "";
 
         let xhr = new XMLHttpRequest();
-        xhr.open("GET", `/api/get/operations-account?id_account=${account_list.value}&start=${start_str}&end=${end_str}`, false);
+        xhr.open("GET", `/api/v1/accounts/operations?id_account=${account_list.value}&start=${start_str}&end=${end_str}`, false);
         xhr.onload = () => {
-            if (xhr.status == 200) {
-                operations = JSON.parse(xhr.responseText);
+            if (Math.floor(xhr.status / 100) === 2) {
+                operations = JSON.parse(xhr.responseText).data;
                 nb_operations = operations.length;
 
                 if (nb_operations == 0) {
@@ -207,9 +207,10 @@ function confirm_delete() {
     }
     selected.forEach(element => {
         let xhr = new XMLHttpRequest();
-        xhr.open("GET", `/api/delete/operation?id=${element.getAttribute("id_operation")}`, true);
+        xhr.open("DELETE", `/api/v1/operations`, true);
+        xhr.setRequestHeader("Content-Type", "application/json");
         xhr.onload = () => {
-            if (xhr.status == 200) {
+            if (Math.floor(xhr.status / 100) === 2) {
                 element.remove();
                 operations = operations.filter(operation => operation.id_operation != element.getAttribute("id_operation"));
                 update_brief();
@@ -219,7 +220,7 @@ function confirm_delete() {
                 new_popup("Error deleting operation", "error");
             }
         }
-        xhr.send();
+        xhr.send(JSON.stringify({ id: element.getAttribute("id_operation") }));
     });
 }
 

@@ -129,10 +129,10 @@ onload = () => {
 
 function set_operation_type_list() {
     let xhr = new XMLHttpRequest();
-    xhr.open("GET", "/api/get/operation-types", false);
+    xhr.open("GET", "/api/v1/operations/types", false);
     xhr.onload = () => {
-        if (xhr.status == 200) {
-            operation_type_list = JSON.parse(xhr.responseText);
+        if (Math.floor(xhr.status / 100) === 2) {
+            operation_type_list = JSON.parse(xhr.responseText).data;
 
             chart_labels = ["Remains"];
             chart_colors = ["#36a2eb"];
@@ -150,11 +150,11 @@ function set_operation_type_list() {
 
 function fill_account_lists() {
     var xhr = new XMLHttpRequest();
-    xhr.open("GET", "/api/get/accounts", true);
+    xhr.open("GET", "/api/v1/accounts", true);
     xhr.onload = () => {
-        if (xhr.status == 200) {
+        if (Math.floor(xhr.status / 100) === 2) {
             accounts = xhr.responseText;
-            accounts_list = JSON.parse(xhr.responseText);
+            accounts_list = JSON.parse(xhr.responseText).data;
 
             checking_accounts_list = accounts_list.filter(account => account.type == 0);
             savings_accounts_list = accounts_list.filter(account => account.type == 1);
@@ -186,10 +186,10 @@ function update_global_operation() {
 
     if (account_list.value > 0) {
         let xhr = new XMLHttpRequest();
-        xhr.open("GET", `/api/get/operations-account?id_account=${account_list.value}&start=${start}&end=${end}`, true);
+        xhr.open("GET", `/api/v1/accounts/operations?id_account=${account_list.value}&start=${start}&end=${end}`, true);
         xhr.onload = () => {
-            if (xhr.status == 200) {
-                global_operations = JSON.parse(xhr.responseText);
+            if (Math.floor(xhr.status / 100) === 2) {
+                global_operations = JSON.parse(xhr.responseText).data;
                 if (global_operations.length == 0) {
                     new_popup("There is no operation this month", "info");
                     show_empty()

@@ -111,12 +111,12 @@ let budget_chart = new Chart(
 
 onload = () => {
     var xhr = new XMLHttpRequest();
-    xhr.open("GET", "/api/get/accounts", true);
+    xhr.open("GET", "/api/v1/accounts", true);
     xhr.onload = () => {
-        if (xhr.status == 200) {
-            accounts = xhr.responseText;
+        if (Math.floor(xhr.status / 100) === 2) {
+            accounts = JSON.parse(xhr.responseText).data;
 
-            if (JSON.parse(accounts).length == 0) {
+            if (accounts.length == 0) {
                 new_popup("There is no account yet", "info");
                 return;
             }
@@ -137,10 +137,10 @@ onload = () => {
 
 function set_operation_type_list() {
     let xhr = new XMLHttpRequest();
-    xhr.open("GET", "/api/get/operation-types", false);
+    xhr.open("GET", "/api/v1/operations/types", false);
     xhr.onload = () => {
-        if (xhr.status == 200) {
-            operation_type_list = JSON.parse(xhr.responseText);
+        if (Math.floor(xhr.status / 100) === 2) {
+            operation_type_list = JSON.parse(xhr.responseText).data;
 
             pie_labels = ["Remains"];
             pie_colors = ["#36a2eb"];
@@ -158,10 +158,10 @@ function set_operation_type_list() {
 
 function fill_dataset() {
     let xhr = new XMLHttpRequest();
-    xhr.open("GET", "/api/get/operations?accounts=" + accounts + "&limit=" + 14, true);
+    xhr.open("GET", "/api/v1/operations?accounts=" + JSON.stringify(accounts) + "&limit=" + 14, true);
     xhr.onload = () => {
-        if (xhr.status == 200) {
-            operations = JSON.parse(xhr.responseText);
+        if (Math.floor(xhr.status / 100) === 2) {
+            operations = JSON.parse(xhr.responseText).data;
             nb_operations = operations.length;
 
             for (let i = 0; i < nb_operations; i++) {
@@ -188,7 +188,7 @@ function fill_dataset() {
 function set_log_charts() {
 
     // get account with highest balance
-    let highest_account = JSON.parse(accounts).reduce((prev, current) => (prev.sold > current.sold) ? prev : current);
+    let highest_account = accounts.reduce((prev, current) => (prev.sold > current.sold) ? prev : current);
 
     let start = new Date();
     let end = new Date(start);
@@ -200,17 +200,17 @@ function set_log_charts() {
     let end_str = formatDateToString(end);
 
     let xhr = new XMLHttpRequest();
-    xhr.open("GET", `/api/get/operations-account?id_account=${highest_account.id_account}&start=${start_str}&end=${end_str}`, true);
+    xhr.open("GET", `/api/v1/accounts/operations?id_account=${highest_account.id_account}&start=${start_str}&end=${end_str}`, true);
     xhr.onload = () => {
-        if (xhr.status == 200) {
-            operations = JSON.parse(xhr.responseText);
+        if (Math.floor(xhr.status / 100) === 2) {
+            operations = JSON.parse(xhr.responseText).data;
 
             // Security if there is no operation at the start of the chart
             let xhr2 = new XMLHttpRequest();
-            xhr2.open("GET", `/api/get/amount?id_account=${highest_account.id_account}&date=${start_str}`, false);
+            xhr2.open("GET", `/api/v1/accounts/balance?id_account=${highest_account.id_account}&date=${start_str}`, false);
             xhr2.onload = () => {
-                if (xhr2.status == 200) {
-                    operations.unshift({ ["date"]: start_str, ["new_sold"]: parseInt(xhr2.responseText) });
+                if (Math.floor(xhr2.status / 100) === 2) {
+                    operations.unshift({ ["date"]: start_str, ["new_sold"]: parseInt(JSON.parse(xhr2.responseText).data) });
                 }
                 else {
                     new_popup("Error getting operations", "error");
@@ -254,9 +254,9 @@ function set_log_charts() {
 function set_pie_chart() {
     // get accounts type 0
     let checking_accounts = [];
-    for (let i = 0; i < JSON.parse(accounts).length; i++) {
-        if (JSON.parse(accounts)[i].type == 0) {
-            checking_accounts.push(JSON.parse(accounts)[i]);
+    for (let i = 0; i < accounts.length; i++) {
+        if (accounts[i].type == 0) {
+            checking_accounts.push(accounts[i]);
         }
     }
     const random_checking_account = checking_accounts[Math.floor(Math.random() * checking_accounts.length)];
@@ -271,10 +271,10 @@ function set_pie_chart() {
     end = formatDateToString(end);
 
     let xhr = new XMLHttpRequest();
-    xhr.open("GET", `/api/get/operations-account?id_account=${random_checking_account.id_account}&start=${start}&end=${end}`, true);
+    xhr.open("GET", `/api/v1/accounts/operations?id_account=${random_checking_account.id_account}&start=${start}&end=${end}`, true);
     xhr.onload = () => {
-        if (xhr.status == 200) {
-            operations = JSON.parse(xhr.responseText);
+        if (Math.floor(xhr.status / 100) === 2) {
+            operations = JSON.parse(xhr.responseText).data;
             if (operations.length == 0) {
                 operations.push({ ["amount"]: 0.01, ["category"]: 5 });
             }

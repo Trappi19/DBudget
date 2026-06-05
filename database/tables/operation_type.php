@@ -21,7 +21,7 @@ class OperationType
 
         $query = $db->prepare('SELECT * FROM operation_type WHERE account_type = :account_type OR account_type = -1');
         $query->execute(['account_type' => $account_type]);
-        $result = $query->fetch();
+        $result = $query->fetchAll();
 
         return $result;
     }
