@@ -23,9 +23,7 @@ class RegularEvent
         $result = $query->fetch();
 
         if (!$result) {
-            http_response_code(404);
-            echo json_encode(['code' => 404, 'message' => 'Event not found']);
-            exit;
+            sendAPIResponse(404, 'Event not found', []);
         }
 
         $this->id_regular_event = $result['id_regular_event'];

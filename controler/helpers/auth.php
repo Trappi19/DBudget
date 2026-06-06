@@ -1,4 +1,5 @@
 <?php
+require_once($_SERVER['DOCUMENT_ROOT'] . '/database/api/v1/apiUtils.php');
 
 function requireLogin() {
     if (session_status() !== PHP_SESSION_ACTIVE) session_start();
@@ -12,7 +13,6 @@ function requireLogin() {
 function requireLoginApi() {
     if (session_status() !== PHP_SESSION_ACTIVE) session_start();
     if (!isset($_SESSION['email'])) {
-        echo json_encode(['error' => 'Not logged']);
-        exit;
+        sendAPIResponse(401, 'Not logged in', []);
     }
 }

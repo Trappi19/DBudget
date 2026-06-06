@@ -41,10 +41,9 @@ function set_operation_type_list() {
 
 function set_select_category() {
     // Get the selected account type by using let accounts
-    let accounts_list = JSON.parse(accounts);
     select_category.innerHTML = "";
 
-    accounts_list.forEach(account => {
+    accounts.forEach(account => {
         if (account.id_account == account_list.value) {
             operation_type_list.forEach(operation_type => {
                 if (operation_type.account_type == account.type) {
@@ -92,7 +91,7 @@ function update_datasheet() {
     datasheet.innerHTML = "";
 
     let xhr = new XMLHttpRequest();
-    xhr.open("GET", "/api/v1/events?accounts=" + accounts + "&date=" + date, true);
+    xhr.open("GET", "/api/v1/events?accounts=" + JSON.stringify(accounts.map(account => account.id_account)) + "&date=" + date, true);
     xhr.onload = () => {
         if (Math.floor(xhr.status / 100) === 2) {
             events = JSON.parse(xhr.responseText).data;
@@ -128,7 +127,7 @@ function update_datasheet() {
                     datasheet.innerHTML += `<li class="table-row">
                         <div class="col col-1" data-label="Label"> ${events[i].label} </div>
                         <div class="col col-2" data-label="Amount"> ${events[i].amount.toFixed(2)} € </div>
-                        <div class="col col-3" data-label="Account"> ${accounts_list.find(account => account.id_account === events[i].id_account).label} </div>
+                        <div class="col col-3" data-label="Account"> ${accounts.find(account => account.id_account === events[i].id_account).label} </div>
                         <div class="col col-4" data-label="Start"> ${new Date(events[i].start).toLocaleDateString("fr-FR")} </div>
                         <div class="col col-5" data-label="End"> ${new Date(events[i].end).toLocaleDateString("fr-FR")} </div>
                         <div class="col col-6" data-label="Frequency"> ${events[i].frequency_type == 0 ? "Every Day" : events[i].frequency_type == 1 ? "Every Week" : events[i].frequency_type == 2 ? "Every Month" : "Every Year"} </div>
@@ -161,16 +160,15 @@ function fill_account_list() {
     xhr.onload = () => {
         if (Math.floor(xhr.status / 100) === 2) {
             const response = JSON.parse(xhr.responseText);
-            accounts_list = response.data;
-            accounts = JSON.stringify(accounts_list);
+            accounts = response.data;
 
-            if (accounts_list.length == 0) {
+            if (accounts.length == 0) {
                 new_popup("There is no account yet", "info");
                 document.getElementById("event-form").disabled = true;
                 return;
             }
 
-            accounts_list.forEach(account => {
+            accounts.forEach(account => {
                 account_list.innerHTML += `<option value="${account.id_account}">${account.label}</option>`;
             });
 

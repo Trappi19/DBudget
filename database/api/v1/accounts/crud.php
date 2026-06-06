@@ -3,32 +3,29 @@ header('Content-Type: application/json');
 require($_SERVER['DOCUMENT_ROOT'] . '/database/connexion.php');
 require($_SERVER['DOCUMENT_ROOT'] . '/database/tables/account.php');
 require($_SERVER['DOCUMENT_ROOT'] . '/database/tables/operation.php');
-require_once($_SERVER['DOCUMENT_ROOT'] . '/database/api/v1/validate.php');
+require_once($_SERVER['DOCUMENT_ROOT'] . '/database/api/v1/apiUtils.php');
 
 
 
 // GET /api/v1/accounts        -> liste
 // GET /api/v1/accounts?id=X   -> item
 if ($method === 'GET') {
-    $id = isset($_GET['id']) ? sanitize_body(['id' => $_GET['id']])['id'] : null;
+    $id = $_GET['id'] ?? null;
 
-    if ($id !== null) {
-        checkRequiredArg(['id' => $id], ['id'], ['id']); // $id vient de $_GET
+    if ($id != null) {
 
         $query = $db->prepare('SELECT id_account, label, type FROM bank_account WHERE id_account = :id AND user_email = :email');
         $query->execute(['id' => $id, 'email' => $_SESSION['email']]);
         $result = $query->fetch(PDO::FETCH_ASSOC);
 
         if (!$result) {
-            http_response_code(404);
-            echo json_encode(['code' => 404, 'message' => 'Account not found', 'data' => []]);
-            exit;
+            sendAPIResponse(404, 'Account not found', []);
         }
 
         $result['sold'] = Operation::getLastOperationSoldByAccount($id, date('Y-m-d'));
-        echo json_encode(['code' => 200, 'message' => 'OK', 'data' => $result]);
-        exit;
+        sendAPIResponse(200, 'OK', $result);
     } else {
+
         $query = $db->prepare('SELECT id_account, label, type FROM bank_account WHERE user_email = :email ORDER BY type ASC');
         $query->execute(['email' => $_SESSION['email']]);
         $result = $query->fetchAll(PDO::FETCH_ASSOC);
@@ -37,15 +34,14 @@ if ($method === 'GET') {
             $result[$key]['sold'] = Operation::getLastOperationSoldByAccount($value['id_account'], date('Y-m-d'));
         }
 
-        echo json_encode(['code' => 200, 'message' => 'OK', 'data' => $result]);
-        exit;
+        sendAPIResponse(200, 'OK', $result);
     }
 }
 
 // POST /api/v1/accounts -> creation
 if ($method === 'POST') {
-    $body['sold'] = $body['sold'] ?: 0;
-    ['label' => $label, 'type' => $type, 'sold' => $sold] = checkRequiredArg($body, ['label', 'type', 'sold']);
+    ['label' => $label, 'type' => $type] = checkRequiredArg($body, ['label', 'type']);
+    $sold = $body['sold'] ?: 0;
 
     $id_account = Account::createAccount($label, $type, $_SESSION['email']);
 
@@ -53,41 +49,35 @@ if ($method === 'POST') {
         Operation::createOperation("Init " . $label . " sold", "1999-01-01", $sold, 5, 0, $id_account);
     }
 
-    http_response_code(201);
-    echo json_encode(['code' => 201, 'message' => 'Account created', 'data' => []]);
-    exit;
+    sendAPIResponse(201, 'Account created', []);
 }
 
 // PATCH /api/v1/accounts
 if ($method === 'PATCH') {
-    ['id' => $id, 'label' => $label, 'type' => $type, 'sold' => $sold] = checkRequiredArg($body, ['id', 'label', 'type', 'sold'], ['id']);
+
+    ['id' => $id, 'label' => $label, 'type' => $type, 'sold' => $sold] = checkRequiredArg($body, ['id', 'label', 'type', 'sold']);
 
     $account = new Account($id);
     $account->setLabel($label);
     $account->setType($type);
 
     $prev_sold = Operation::getLastOperationSoldByAccount($id, date('Y-m-d'));
+
     if ($sold - $prev_sold != 0) {
         Operation::createOperation("Balance update", date('Y-m-d'), $sold - $prev_sold, 6, 0, $id);
     }
 
     $account->update();
 
-    http_response_code(200);
-    echo json_encode(['code' => 200, 'message' => 'Account updated', 'data' => []]);
-    exit;
+    sendAPIResponse(200, 'Account updated', []);
 }
 
 // DELETE /api/v1/accounts
 if ($method === 'DELETE') {
-    ['id' => $id] = checkRequiredArg($body, ['id'], ['id']);
+    ['id' => $id] = checkRequiredArg($body, ['id']);
 
     Account::deleteAccount($id);
-
-    http_response_code(200);
-    echo json_encode(['code' => 200, 'message' => 'Account deleted', 'data' => []]);
-    exit;
+    sendAPIResponse(200, 'Account deleted', []);
 }
 
-http_response_code(405);
-echo json_encode(['code' => 405, 'message' => 'Method not allowed', 'data' => []]);
+sendAPIResponse(405, 'Method not allowed', []);

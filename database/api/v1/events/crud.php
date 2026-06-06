@@ -2,34 +2,26 @@
 header('Content-Type: application/json');
 require($_SERVER['DOCUMENT_ROOT'] . '/database/connexion.php');
 require($_SERVER['DOCUMENT_ROOT'] . '/database/tables/regular_event.php');
-require_once($_SERVER['DOCUMENT_ROOT'] . '/database/api/v1/validate.php');
+require_once($_SERVER['DOCUMENT_ROOT'] . '/database/api/v1/apiUtils.php');
 
 
 
 // GET /api/v1/events?accounts=[...]&date=... -> liste
 if ($method === 'GET') {
-    $arg = json_decode($_GET['accounts'] ?? '[]');
-    $date = sanitize_date(sanitize_body(['date' => $_GET['date'] ?? date('Y-m-d')])['date']);
-    if ($date === false) {
-        http_response_code(400);
-        echo json_encode(['code' => 400, 'message' => 'Invalid date format (expected Y-m-d)', 'data' => []]);
-        exit;
-    }
 
+    $date = sanitize_date($_GET['date'] ?? date('Y-m-d'));
     $futureDate = date('Y-m-d', strtotime('+1 year', strtotime($date)));
+    $accounts = json_decode($_GET['accounts'] ?? '[]');
+    $limit = isset($_GET['limit']) ? ' LIMIT ' . (int)$_GET['limit'] : '';
 
-    $accountIDs = [];
-    foreach ($arg as $value) {
-        $id = sanitize_body(['id' => $value->id_account ?? null])['id'];
-        if ($id >= 0) $accountIDs[] = $id;
+    if (empty($accounts)) {
+        sendAPIResponse(400, 'No account provided', []);
+    }
+    foreach ($accounts as $account) {
+        $account = sanitize_int($account ?? -1);
     }
 
-    if (empty($accountIDs)) {
-        echo json_encode(['code' => 200, 'message' => 'OK', 'data' => []]);
-        exit;
-    }
-
-    $placeholders = implode(',', array_fill(0, count($accountIDs), '?'));
+    $placeholders = implode(',', array_fill(0, count($accounts), '?'));
 
     $query = $db->prepare(
         'SELECT * FROM regular_event
@@ -38,41 +30,28 @@ if ($method === 'GET') {
          AND start <= ?
          ORDER BY start ASC'
     );
-    $query->execute(array_merge($accountIDs, [$date, $futureDate]));
-    echo json_encode(['code' => 200, 'message' => 'OK', 'data' => $query->fetchAll(PDO::FETCH_ASSOC)]);
-    exit;
+    $query->execute(array_merge($accounts, [$date, $futureDate]));
+    sendAPIResponse(200, 'OK', $query->fetchAll(PDO::FETCH_ASSOC));
 }
 
 // POST /api/v1/events
 if ($method === 'POST') {
-    ['label' => $label, 'start' => $start, 'end' => $end, 'amount' => $amount, 'frequency' => $frequency, 'category' => $category, 'id_account' => $id_account] = checkRequiredArg($body, ['label', 'start', 'end', 'amount', 'frequency', 'category', 'id_account'], ['id_account']);
+    ['label' => $label, 'start' => $start, 'end' => $end, 'amount' => $amount, 'frequency' => $frequency, 'category' => $category, 'id_account' => $id_account] = checkRequiredArg($body, ['label', 'start', 'end', 'amount', 'frequency', 'category', 'id_account']);
 
     $start = sanitize_date($start ?? '');
     $end   = sanitize_date($end ?? '');
-    if ($start === false || $end === false) {
-        http_response_code(400);
-        echo json_encode(['code' => 400, 'message' => 'Invalid date format (expected Y-m-d)', 'data' => []]);
-        exit;
-    }
 
     RegularEvent::createRegularEvent($label, $start, $end, $amount, $frequency, $category, $id_account);
 
-    http_response_code(201);
-    echo json_encode(['code' => 201, 'message' => 'Event created', 'data' => []]);
-    exit;
+    sendAPIResponse(201, 'Event created', []);
 }
 
 // PATCH /api/v1/events
 if ($method === 'PATCH') {
-    ['id' => $id, 'label' => $label, 'amount' => $amount, 'start' => $start, 'end' => $end, 'frequency' => $frequency, 'category' => $category] = checkRequiredArg($body, ['id', 'label', 'amount', 'start', 'end', 'frequency', 'category'], ['id']);
+    ['id' => $id, 'label' => $label, 'amount' => $amount, 'start' => $start, 'end' => $end, 'frequency' => $frequency, 'category' => $category] = checkRequiredArg($body, ['id', 'label', 'amount', 'start', 'end', 'frequency', 'category']);
 
     $start = sanitize_date($start ?? '');
     $end   = sanitize_date($end ?? '');
-    if ($start === false || $end === false) {
-        http_response_code(400);
-        echo json_encode(['code' => 400, 'message' => 'Invalid date format (expected Y-m-d)', 'data' => []]);
-        exit;
-    }
 
     $event = new RegularEvent($id);
     $event->setLabel($label);
@@ -83,21 +62,16 @@ if ($method === 'PATCH') {
     $event->setCategory($category);
     $event->update();
 
-    http_response_code(200);
-    echo json_encode(['code' => 200, 'message' => 'Event updated', 'data' => []]);
-    exit;
+    sendAPIResponse(200, 'Event updated', []);
 }
 
 // DELETE /api/v1/events
 if ($method === 'DELETE') {
-    ['id' => $id] = checkRequiredArg($body, ['id'], ['id']);
+    ['id' => $id] = checkRequiredArg($body, ['id']);
 
     RegularEvent::deleteRegularEvent($id);
 
-    http_response_code(200);
-    echo json_encode(['code' => 200, 'message' => 'Event deleted', 'data' => []]);
-    exit;
+    sendAPIResponse(200, 'Event deleted', []);
 }
 
-http_response_code(405);
-echo json_encode(['code' => 405, 'message' => 'Method not allowed', 'data' => []]);
+sendAPIResponse(405, 'Method not allowed', []);

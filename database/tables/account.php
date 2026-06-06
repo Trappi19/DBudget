@@ -19,9 +19,7 @@ class Account
         $result = $query->fetch();
 
         if (!$result) {
-            http_response_code(404);
-            echo json_encode(['code' => 404, 'message' => 'Account not found']);
-            exit;
+            sendAPIResponse(404, 'Account not found', []);
         }
 
         $this->id_account = $result['id_account'];

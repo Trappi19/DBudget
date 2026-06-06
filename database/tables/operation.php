@@ -22,9 +22,7 @@ class Operation
         $result = $query->fetch();
 
         if (!$result) {
-            http_response_code(404);
-            echo json_encode(['code' => 404, 'message' => 'Operation not found']);
-            exit;
+            sendAPIResponse(404, 'Operation not found', []);
         }
 
         $this->id_operation = $result['id_operation'];
@@ -148,7 +146,6 @@ class Operation
     public static function updateFurtherOperationSold($date, $amount, $id_account)
     {
         global $db;
-
         $query = $db->prepare('UPDATE operation SET new_sold = new_sold + :amount WHERE date >= :date AND id_account = :id_account');
 
         $query->execute([
@@ -188,7 +185,9 @@ class Operation
         $query->execute(['id_account' => $id_account, 'date' => $date]);
         $result = $query->fetch();
 
-        if (!$result) return 0;
+        if (!$result) {
+            return 0;
+        }
 
         return $result['new_sold'];
     }

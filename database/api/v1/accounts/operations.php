@@ -1,13 +1,11 @@
 <?php
 header('Content-Type: application/json');
 require($_SERVER['DOCUMENT_ROOT'] . '/database/connexion.php');
-require_once($_SERVER['DOCUMENT_ROOT'] . '/database/api/v1/validate.php');
+require_once($_SERVER['DOCUMENT_ROOT'] . '/database/api/v1/apiUtils.php');
 
 
 if ($method !== 'GET') {
-    http_response_code(405);
-    echo json_encode(['code' => 405, 'message' => 'Method not allowed', 'data' => []]);
-    exit;
+    sendAPIResponse(405, 'Method not allowed', []);
 }
 
 $id_account = $_GET['id_account'] ?? null;
@@ -26,4 +24,4 @@ $query = $db->prepare(
      ORDER BY date ASC'
 );
 $query->execute(['id_account' => $id_account, 'start' => $start, 'end' => $end]);
-echo json_encode(['code' => 200, 'message' => 'OK', 'data' => $query->fetchAll(PDO::FETCH_ASSOC)]);
+sendAPIResponse(200, 'OK', $query->fetchAll(PDO::FETCH_ASSOC), false);

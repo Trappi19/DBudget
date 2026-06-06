@@ -1,6 +1,6 @@
 <?php
 
-    require_once($_SERVER['DOCUMENT_ROOT'] . '/database/api/v1/validate.php');
+require_once($_SERVER['DOCUMENT_ROOT'] . '/database/api/v1/apiUtils.php');
 require_once($_SERVER['DOCUMENT_ROOT'] . '/controler/helpers/auth.php');
 requireLoginApi();
 
@@ -17,9 +17,7 @@ if (in_array($method, ['POST', 'PATCH', 'DELETE', 'PUT'])) {
     $raw = file_get_contents('php://input');
     $decoded = json_decode($raw, true);
     if ($decoded === null && $raw !== '' && $raw !== 'null') {
-        http_response_code(400);
-        echo json_encode(['code' => 400, 'message' => 'Invalid JSON', 'data' => []]);
-        exit;
+        sendAPIResponse(400, 'Invalid JSON', []);
     }
     $body = sanitize_body($decoded ?? []);
 }
@@ -43,5 +41,4 @@ if (isset($apiRoutes[$uri])) {
     exit;
 }
 
-http_response_code(404);
-echo json_encode(['code' => 404, 'message' => 'API route not found']);
+sendAPIResponse(404, 'API route not found', []);

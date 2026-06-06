@@ -141,10 +141,10 @@ function update_datasheet() {
     document.getElementById("loading-gif").style.display = "flex";
     add_field.style.display = "flex";
     let date = date_to_search.value;
-    let temp_account = accounts;
+    let temp_account = accounts.map(account => account.id_account);
 
     if (balance_view.value != 0) {
-        temp_account = JSON.parse("[{\"id_account\":" + [balance_view.value] + "}]");
+        temp_account = [balance_view.value];
         show_balance(balance_view.value);
     }
     else {
@@ -267,7 +267,7 @@ function show_balance(id_account) {
     xhr.open("GET", `/api/v1/accounts/balance?id_account=${id_account}&date=${date_to_search.value}`, false);
     xhr.onload = () => {
         if (Math.floor(xhr.status / 100) === 2) {
-            balance.value = JSON.parse(xhr.responseText).data + " €";
+            balance.value = JSON.parse(xhr.responseText).data.balance + " €";
         }
         else {
             new_popup("Error getting balance", "error");

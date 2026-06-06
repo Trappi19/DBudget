@@ -2,7 +2,7 @@
 header('Content-Type: application/json');
 require($_SERVER['DOCUMENT_ROOT'] . '/database/connexion.php');
 require($_SERVER['DOCUMENT_ROOT'] . '/database/tables/operation.php');
-require_once($_SERVER['DOCUMENT_ROOT'] . '/database/api/v1/validate.php');
+require_once($_SERVER['DOCUMENT_ROOT'] . '/database/api/v1/apiUtils.php');
 
 
 
@@ -13,45 +13,34 @@ if ($method === 'GET') {
     $id = isset($body['id']) ? $body['id'] : null;
 }
 
-// GET /api/v1/operations?accounts=[...]&date=...&limit=...   -> liste
-// GET /api/v1/operations?id=X                                -> item
+
 if ($method === 'GET') {
+
+    // GET /api/v1/operations?id=X
     if ($id !== null) {
-        checkRequiredArg(['id' => $id], ['id'], ['id']);
+        checkRequiredArg(['id' => $id], ['id']);
 
         $query = $db->prepare('SELECT * FROM operation WHERE id_operation = :id');
         $query->execute(['id' => $id]);
         $result = $query->fetch(PDO::FETCH_ASSOC);
 
         if (!$result) {
-            http_response_code(404);
-            echo json_encode(['code' => 404, 'message' => 'Operation not found', 'data' => []]);
-            exit;
+            sendAPIResponse(404, 'Operation not found', []);
         }
 
-        echo json_encode(['code' => 200, 'message' => 'OK', 'data' => $result]);
-        exit;
+        sendAPIResponse(200, 'OK', $result);
     }
 
-    $arg = json_decode($_GET['accounts'] ?? '[]');
-    $date = sanitize_date(sanitize_body(['date' => $_GET['date'] ?? date('Y-m-d')])['date']);
+    // GET /api/v1/operations?accounts=[...]&date=...&limit=...
+    $accounts = json_decode($_GET['accounts'] ?? '[]');
+    $date = sanitize_date($_GET['date'] ?? date('Y-m-d'));
     $limit = isset($_GET['limit']) ? ' LIMIT ' . (int)$_GET['limit'] : '';
 
-    if ($date === false) {
-        http_response_code(400);
-        echo json_encode(['code' => 400, 'message' => 'Invalid date format (expected Y-m-d)', 'data' => []]);
-        exit;
-    }
-
-    $accounts = [];
-    foreach ($arg as $value) {
-        $id = sanitize_body(['id' => $value->id_account ?? null])['id'];
-        if ($id !== false && $id > 0) $accounts[] = $id;
-    }
-
     if (empty($accounts)) {
-        echo json_encode(['code' => 200, 'message' => 'OK', 'data' => []]);
-        exit;
+        sendAPIResponse(200, 'OK', []);
+    }
+    foreach ($accounts as $account) {
+        $account = sanitize_int($account ?? 0);
     }
 
     $placeholders = implode(',', array_fill(0, count($accounts), '?'));
@@ -59,9 +48,7 @@ if ($method === 'GET') {
     if (isset($_GET['regularity'])) {
         $regularity = sanitize_body(['regularity' => $_GET['regularity']])['regularity'];
         if ($regularity === false) {
-            http_response_code(400);
-            echo json_encode(['code' => 400, 'message' => 'Invalid regularity', 'data' => []]);
-            exit;
+            sendAPIResponse(400, 'Invalid regularity', []);
         }
         $params = array_merge($accounts, [$regularity, $date]);
         $query = $db->prepare(
@@ -82,38 +69,26 @@ if ($method === 'GET') {
     }
 
     $query->execute($params);
-    echo json_encode(['code' => 200, 'message' => 'OK', 'data' => $query->fetchAll(PDO::FETCH_ASSOC)]);
-    exit;
+    sendAPIResponse(200, 'OK', $query->fetchAll(PDO::FETCH_ASSOC));
 }
 
 // POST /api/v1/operations
 if ($method === 'POST') {
-    ['label' => $label, 'date' => $date, 'amount' => $amount, 'category' => $category, 'id_account' => $id_account] = checkRequiredArg($body, ['label', 'date', 'amount', 'category', 'id_account'], ['id_account']);
+    ['label' => $label, 'date' => $date, 'amount' => $amount, 'category' => $category, 'id_account' => $id_account] = checkRequiredArg($body, ['label', 'date', 'amount', 'category', 'id_account']);
 
     $date = sanitize_date($date ?? '');
-    if ($date === false) {
-        http_response_code(400);
-        echo json_encode(['code' => 400, 'message' => 'Invalid date format (expected Y-m-d)', 'data' => []]);
-        exit;
-    }
-
     Operation::createOperation($label, $date, $amount, $category, 0, $id_account);
 
-    http_response_code(201);
-    echo json_encode(['code' => 201, 'message' => 'Operation created', 'data' => []]);
-    exit;
+    sendAPIResponse(201, 'Operation created', []);
 }
 
-checkRequiredArg(['id' => $id], ['id'], ['id']);
+checkRequiredArg(['id' => $id], ['id']);
 
 // DELETE /api/v1/operations
 if ($method === 'DELETE') {
     Operation::deleteOperation($id);
 
-    http_response_code(200);
-    echo json_encode(['code' => 200, 'message' => 'Operation deleted', 'data' => []]);
-    exit;
+    sendAPIResponse(200, 'Operation deleted', []);
 }
 
-http_response_code(405);
-echo json_encode(['code' => 405, 'message' => 'Method not allowed', 'data' => []]);
+sendAPIResponse(405, 'Method not allowed', []);

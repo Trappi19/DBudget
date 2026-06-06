@@ -158,7 +158,7 @@ function set_operation_type_list() {
 
 function fill_dataset() {
     let xhr = new XMLHttpRequest();
-    xhr.open("GET", "/api/v1/operations?accounts=" + JSON.stringify(accounts) + "&limit=" + 14, true);
+    xhr.open("GET", "/api/v1/operations?accounts=" + JSON.stringify(accounts.map(account => account.id_account)) + "&limit=" + 14, true);
     xhr.onload = () => {
         if (Math.floor(xhr.status / 100) === 2) {
             operations = JSON.parse(xhr.responseText).data;
@@ -210,7 +210,7 @@ function set_log_charts() {
             xhr2.open("GET", `/api/v1/accounts/balance?id_account=${highest_account.id_account}&date=${start_str}`, false);
             xhr2.onload = () => {
                 if (Math.floor(xhr2.status / 100) === 2) {
-                    operations.unshift({ ["date"]: start_str, ["new_sold"]: parseInt(JSON.parse(xhr2.responseText).data) });
+                    operations.unshift({ ["date"]: start_str, ["new_sold"]: parseInt(JSON.parse(xhr2.responseText).data.balance) });
                 }
                 else {
                     new_popup("Error getting operations", "error");

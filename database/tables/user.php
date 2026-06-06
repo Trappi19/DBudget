@@ -18,9 +18,7 @@ class User
         $result = $query->fetch();
 
         if (!$result) {
-            http_response_code(404);
-            echo json_encode(['code' => 404, 'message' => 'User not found']);
-            exit;
+            sendAPIResponse(404, 'User not found', []);
         }
 
         $this->email = $result['email'];
