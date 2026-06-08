@@ -43,6 +43,9 @@
                     </li>
                 <?php endfor; ?>
             </div>
+            <div id="balance-footer">
+                <span id="balance-footer-text"></span>
+            </div>
         </ul>
     </section>
 

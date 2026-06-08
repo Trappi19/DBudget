@@ -214,4 +214,22 @@
   font-style: italic;
 }
 
+#balance-footer {
+  padding: 0 16px;
+  background-color: #f5f5f5;
+  border-radius: 0 0 5px 5px;
+  font-style: italic;
+  color: #444;
+  font-size: 0.9em;
+  overflow: hidden;
+  max-height: 0;
+  opacity: 0;
+  transition: max-height 0.35s ease, opacity 0.3s ease, padding 0.3s ease;
+}
+#balance-footer.visible {
+  max-height: 60px;
+  opacity: 1;
+  padding: 10px 16px;
+}
+
 /*# sourceMappingURL=operations.css.map */
