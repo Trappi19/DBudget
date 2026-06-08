@@ -46,7 +46,7 @@ if ($method === 'POST') {
     $id_account = Account::createAccount($label, $type, $_SESSION['email']);
 
     if ($sold != 0) {
-        Operation::createOperation("Init " . $label . " sold", "1999-01-01", $sold, 5, 0, $id_account);
+        Operation::createOperation("Init " . $label . " sold", "1999-01-01", $sold, 6, 0, $id_account);
     }
 
     sendAPIResponse(201, 'Account created', []);

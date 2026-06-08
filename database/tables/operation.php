@@ -8,7 +8,7 @@ class Operation
     private $label;
     private $date;
     private $amount;
-    private $category; // 0 = Groceries, 1 = leisure, 2 = rent & utilities, 3 = health, 4 = Clothing & Needed, 5 = other
+    private $category; // 0 = saving, 1 = Groceries, 2 = leisure, 3 = rent & utilities, 4 = health, 5 = Clothing & Needed, 6 = other, 7 = withdrawal, 8 = Interest
     private $regularity; // 0 = one time, > = regular
     private $new_sold;
     private $id_account;
