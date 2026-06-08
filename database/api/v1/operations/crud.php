@@ -18,7 +18,6 @@ if ($method === 'GET') {
 
     // GET /api/v1/operations?id=X
     if ($id !== null) {
-        checkRequiredArg(['id' => $id], ['id']);
 
         $query = $db->prepare('SELECT * FROM operation WHERE id_operation = :id');
         $query->execute(['id' => $id]);
@@ -31,9 +30,11 @@ if ($method === 'GET') {
         sendAPIResponse(200, 'OK', $result);
     }
 
-    // GET /api/v1/operations?accounts=[...]&date=...&limit=...
+    // GET /api/v1/operations?accounts=[...]&date=...&limit=...&label=...&category=...&regularity=...
     $accounts = json_decode($_GET['accounts'] ?? '[]');
     $date = sanitize_date($_GET['date'] ?? date('Y-m-d'));
+    $where = 'WHERE id_account IN (' . implode(',', array_fill(0, count($accounts), '?')) . ') AND date <= ?';
+    $params = array_merge($accounts, [$date]);
     $limit = isset($_GET['limit']) ? ' LIMIT ' . (int)$_GET['limit'] : '';
 
     if (empty($accounts)) {
@@ -43,31 +44,25 @@ if ($method === 'GET') {
         $account = sanitize_int($account ?? 0);
     }
 
-    $placeholders = implode(',', array_fill(0, count($accounts), '?'));
-
     if (isset($_GET['regularity'])) {
-        $regularity = sanitize_body(['regularity' => $_GET['regularity']])['regularity'];
-        if ($regularity === false) {
-            sendAPIResponse(400, 'Invalid regularity', []);
-        }
-        $params = array_merge($accounts, [$regularity, $date]);
-        $query = $db->prepare(
-            'SELECT * FROM operation
-             WHERE id_account IN (' . $placeholders . ')
-             AND regularity = ?
-             AND date <= ?
-             ORDER BY date DESC' . $limit
-        );
-    } else {
-        $params = array_merge($accounts, [$date]);
-        $query = $db->prepare(
-            'SELECT * FROM operation
-             WHERE id_account IN (' . $placeholders . ')
-             AND date <= ?
-             ORDER BY date DESC' . $limit
-        );
+        $regularity = sanitize_int($_GET['regularity']);
+        if ($regularity == 0) sendAPIResponse(400, 'Invalid regularity', []);
+        $where .= ' AND regularity = ?';
+        $params[] = $regularity;
     }
 
+    if (isset($_GET['label']) && $_GET['label'] !== '') {
+        $label_filter = '%' . sanitize_string($_GET['label']) . '%';
+        $where .= ' AND label LIKE ?';
+        $params[] = $label_filter;
+    }
+
+    if (isset($_GET['category'])) {
+        $where .= ' AND category = ?';
+        $params[] = sanitize_int($_GET['category']);
+    }
+
+    $query = $db->prepare('SELECT * FROM operation ' . $where . ' ORDER BY date DESC' . $limit);
     $query->execute($params);
     sendAPIResponse(200, 'OK', $query->fetchAll(PDO::FETCH_ASSOC));
 }

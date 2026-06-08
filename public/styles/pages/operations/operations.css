@@ -177,6 +177,12 @@
 #search-filters #filter-toggle:hover {
   background-color: #ececec;
 }
+#search-filters #filter-toggle img {
+  display: block;
+  width: 27px;
+  height: 27px;
+  filter: invert(1);
+}
 @media (min-width: 768px) {
   #search-filters #filter-dropdown {
     display: flex;

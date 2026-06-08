@@ -1,4 +1,3 @@
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0&icon_names=filter_alt" />
 <link rel="stylesheet" href="/public/styles/pages/operations/operations.css">
 <link rel="stylesheet" href="/public/styles/table/table.css">
 
@@ -8,14 +7,17 @@
         <section id="search-filters">
             <div id="search-filters-left">
                 <input type="text" name="search-label" id="search-label" placeholder="Rechercher un label...">
-                <button type="button" id="filter-toggle"><span class="material-symbols-outlined">filter_alt</span></button>
+                <button type="button" id="filter-toggle"><img src="/assets/images/filter.png" alt="filter"></button>
             </div>
             <div id="filter-dropdown">
                 <select name="balance-view" id="balance-view">
                     <option value="0">Tous les comptes</option>
                 </select>
                 <select name="filter-type" id="filter-type">
-                    <option value="0">Tous les types</option>
+                    <option value="">Tous les types</option>
+                    <?php foreach ($operation_types as $type): ?>
+                        <option value="<?= (int) $type['id'] ?>"><?= htmlspecialchars($type['title']) ?></option>
+                    <?php endforeach; ?>
                 </select>
                 <input type="date" name="date-to-search" id="date-to-search">
             </div>
@@ -40,9 +42,6 @@
                         <div class="col col-5" data-label="Actions"></div>
                     </li>
                 <?php endfor; ?>
-                <li id="no-result" class="table-row" style="display:none;">
-                    <div style="width:100%; text-align:center;">Aucune opération</div>
-                </li>
             </div>
         </ul>
     </section>
@@ -92,6 +91,12 @@
 <br>
 <br>
 
+<script>
+    // Données pré-chargées par le serveur (voir controler/pages/operations.php).
+    // Évite deux requêtes API au chargement de la page.
+    window.ACCOUNTS = <?= json_encode($accounts, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT) ?>;
+    window.OPERATION_TYPES = <?= json_encode($operation_types, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT) ?>;
+</script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="/public/js/operations.js" type="text/javascript"></script>
 

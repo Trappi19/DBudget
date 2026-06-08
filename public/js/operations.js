@@ -7,6 +7,8 @@ const balance_view = document.getElementById("balance-view");
 const balance = document.getElementById("balance");
 const add_field = document.getElementById("add-field");
 const select_category = document.getElementById("category");
+const search_label = document.getElementById("search-label");
+const filter_type = document.getElementById("filter-type");
 let accounts = [];
 let selected_account;
 let operation_type_list = [];
@@ -22,6 +24,11 @@ onload = () => {
     document.getElementById("filter-toggle").addEventListener("click", () => {
         document.getElementById("filter-dropdown").classList.toggle("open");
     });
+
+    search_label.addEventListener("input", update_datasheet);
+    filter_type.addEventListener("change", update_datasheet);
+    balance_view.addEventListener("change", update_datasheet);
+    date_to_search.addEventListener("change", update_datasheet);
 
     date_to_search.valueAsDate = new Date();
     operation_date.valueAsDate = new Date();
@@ -76,6 +83,9 @@ function set_operation_type_list() {
     xhr.onload = () => {
         if (Math.floor(xhr.status / 100) === 2) {
             operation_type_list = JSON.parse(xhr.responseText).data;
+            operation_type_list.forEach(t => {
+                filter_type.innerHTML += `<option value="${t.id}">${t.title}</option>`;
+            });
         }
         else {
             new_popup("Error getting operation type list", "error");
@@ -132,12 +142,15 @@ function delete_element(element_id) {
 
 function datasheet_clear() {
     for (let i = 0; i < 14; i++) {
+        datasheet.children[i].style.display = "";
         datasheet.children[i].children[0].innerHTML = "---";
         datasheet.children[i].children[1].innerHTML = "---";
         datasheet.children[i].children[2].innerHTML = "---";
         datasheet.children[i].children[3].innerHTML = "---";
         datasheet.children[i].children[4].innerHTML = "";
         datasheet.children[i].style.color = "black";
+        
+        for (let c = 0; c < 5; c++) datasheet.children[i].children[c].style.cssText = "";
     }
 }
 
@@ -157,8 +170,16 @@ function update_datasheet() {
 
     datasheet_clear();
 
+    let url = "/api/v1/operations?accounts=" + JSON.stringify(temp_account) + "&limit=14&date=" + date;
+    if (search_label.value.trim() !== "") {
+        url += "&label=" + encodeURIComponent(search_label.value);
+    }
+    if (filter_type.value !== "") {
+        url += "&category=" + filter_type.value;
+    }
+
     let xhr = new XMLHttpRequest();
-    xhr.open("GET", "/api/v1/operations?accounts=" + JSON.stringify(temp_account) + "&limit=14&date=" + date, false);
+    xhr.open("GET", url, false);
     xhr.onload = () => {
         if (Math.floor(xhr.status / 100) === 2) {
             operations = JSON.parse(xhr.responseText).data;
@@ -166,6 +187,13 @@ function update_datasheet() {
 
             if (nb_operations == 0) {
                 new_popup("There is no operation at this date", "info");
+
+                let first = datasheet.children[0];
+                first.children[0].innerHTML = "Aucune opération";
+
+                first.children[0].style.cssText = "flex:1; text-align:center; font-style:italic; color:#888;";
+                for (let c = 1; c < 5; c++) first.children[c].style.display = "none";
+                document.getElementById("loading-gif").style.display = "none";
                 return;
             }
 
@@ -271,7 +299,16 @@ function show_balance(id_account) {
     xhr.open("GET", `/api/v1/accounts/balance?id_account=${id_account}&date=${date_to_search.value}`, false);
     xhr.onload = () => {
         if (Math.floor(xhr.status / 100) === 2) {
-            balance.value = JSON.parse(xhr.responseText).data.balance + " €";
+            const b = JSON.parse(xhr.responseText).data.balance;
+            balance.value = b + " €";
+
+            const account = accounts.find(a => a.id_account == id_account);
+            const accountName = account.label;
+            const dateStr = new Date(date_to_search.value).toLocaleDateString("fr-FR");
+            const footer = document.getElementById("balance-footer");
+            document.getElementById("balance-footer-text").innerHTML =
+                `Le solde de <strong>${accountName}</strong> est de <strong>${parseFloat(b).toFixed(2)} €</strong> à la date du <strong>${dateStr}</strong>`;
+            footer.classList.add("visible");
         }
         else {
             new_popup("Error getting balance", "error");
