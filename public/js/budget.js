@@ -134,10 +134,10 @@ function set_operation_type_list() {
         if (Math.floor(xhr.status / 100) === 2) {
             operation_type_list = JSON.parse(xhr.responseText).data;
 
-            chart_labels = ["Remains"];
+            chart_labels = [t('home.chart_remains')];
             chart_colors = ["#36a2eb"];
             for (let i = 0; i < 9; i++) {
-                chart_labels[i + 1] = operation_type_list[i].title;
+                chart_labels[i + 1] = translate_category(operation_type_list[i].title);
                 chart_colors[i + 1] = operation_type_list[i].chart_color;
             }
         }
@@ -160,7 +160,7 @@ function fill_account_lists() {
             savings_accounts_list = accounts_list.filter(account => account.type == 1);
 
             if (checking_accounts_list.length == 0) {
-                new_popup("There is no checking account yet", "info");
+                new_popup(t('budget.no_checking_account'), "info");
                 document.getElementsByClassName("analytics-form")[0].disabled = true;
             }
             else {
@@ -191,7 +191,7 @@ function update_global_operation() {
             if (Math.floor(xhr.status / 100) === 2) {
                 global_operations = JSON.parse(xhr.responseText).data;
                 if (global_operations.length == 0) {
-                    new_popup("There is no operation this month", "info");
+                    new_popup(t('budget.no_operations'), "info");
                     show_empty()
                 }
                 else {
@@ -236,8 +236,8 @@ function add_additional_operations() {
     for (let i = 0; i < additional_expenditure.length; i++) { additional_expenditure_acc += parseInt(additional_expenditure[i].value == "" ? 0 : additional_expenditure[i].value); }
     document.getElementById("total-add-expenditure").innerHTML = -additional_expenditure_acc;
 
-    operations.push({ ["amount"]: -additional_expenditure_acc, ["category"]: 6, ["label"]: "Additional expenditure" });
-    operations.push({ ["amount"]: -expected_savings, ["category"]: 0, ["label"]: "Expected savings" });
+    operations.push({ ["amount"]: -additional_expenditure_acc, ["category"]: 6, ["label"]: t('budget.additional_expenditure_label') });
+    operations.push({ ["amount"]: -expected_savings, ["category"]: 0, ["label"]: t('budget.expected_savings_label') });
 
     return operations;
 }
@@ -279,10 +279,10 @@ function update_datasheet(operations) {
     for (let i = 0; i < operations.length; i++) {
         datasheet.innerHTML += `
                     <li class="table-row" id_operation="${operations[i].id_operation}">
-                        <div class="col col-1" data-label="Date"> ${new Date(operations[i].date).toLocaleDateString("fr-FR")} </div>
-                        <div class="col col-2" data-label="Label"> ${operations[i].label} </div>
-                        <div class="col col-3" data-label="Amount"> ${(operations[i].amount > 0 ? "+" : "") + operations[i].amount.toFixed(2)} € </div>
-                        <div class="col col-4" data-label="Category"> ${operation_type_list[operations[i].category].title} </div>
+                        <div class="col col-1" data-label="${t('table.date')}"> ${new Date(operations[i].date).toLocaleDateString("fr-FR")} </div>
+                        <div class="col col-2" data-label="${t('table.label')}"> ${operations[i].label} </div>
+                        <div class="col col-3" data-label="${t('table.amount')}"> ${(operations[i].amount > 0 ? "+" : "") + operations[i].amount.toFixed(2)} € </div>
+                        <div class="col col-4" data-label="${t('table.category')}"> ${translate_category(operation_type_list[operations[i].category].title)} </div>
                     </li>`;
 
         datasheet.children[i].style.backgroundColor = chart_colors[operations[i].category + 1];
@@ -306,11 +306,11 @@ function show_empty() {
     for ($i = 0; $i < 14; $i++) {
         tmp_html += `
         <li class="table-row">
-            <div class="col col-1" data-label="Date"> --- </div>
-            <div class="col col-2" data-label="Label"> --- </div>
-            <div class="col col-3" data-label="Amount"> --- </div>
-            <div class="col col-4" data-label="Category"> --- </div>
-            <div class="col col-5" data-label="Actions"></div>
+            <div class="col col-1" data-label="${t('table.date')}"> --- </div>
+            <div class="col col-2" data-label="${t('table.label')}"> --- </div>
+            <div class="col col-3" data-label="${t('table.amount')}"> --- </div>
+            <div class="col col-4" data-label="${t('table.category')}"> --- </div>
+            <div class="col col-5" data-label="${t('table.actions')}"></div>
         </li>`;
     }
     datasheet.innerHTML = tmp_html;
@@ -330,14 +330,15 @@ function add_expenditure() {
         <div class="row-field">
             <div>
                 <input type="text" name="label-additional-expenditure" class="label-additional-expenditure"
-                    placeholder="Label">
-                <input type="number" name="account-additional-expenditure" class="account-additional-expenditure" onchange="update_charts()" placeholder="Amount"> €
+                    placeholder="${t('table.label')}">
+                <input type="number" name="account-additional-expenditure" class="account-additional-expenditure" onchange="update_charts()" placeholder="${t('table.amount')}"> €
             </div>
             <img src="/assets/images/trash.png" class="button" alt="delete" class="card-button"
                 onclick="remove_expenditure(this)">
         </div>
     `;
 
+    docum
     document.getElementById("additional-expenditure-section").appendChild(new_expenditure);
 }
 

@@ -6,23 +6,23 @@
     <section class="container">
         <ul class="responsive-table">
             <li class="table-header">
-                <div class="col col-1">Date</div>
-                <div class="col col-2">Label</div>
-                <div class="col col-3">Amount</div>
-                <div class="col col-4">Category</div>
+                <div class="col col-1"><?= t('table.date') ?></div>
+                <div class="col col-2"><?= t('table.label') ?></div>
+                <div class="col col-3"><?= t('table.amount') ?></div>
+                <div class="col col-4"><?= t('table.category') ?></div>
             </li>
             <div id="datasheet">
                 <?php for ($i = 0; $i < 14; $i++): ?>
                     <li class="table-row">
-                        <div class="col col-1" data-label="Date"> --- </div>
-                        <div class="col col-2" data-label="Label"> --- </div>
-                        <div class="col col-3" data-label="Amount"> --- </div>
-                        <div class="col col-4" data-label="Category"> --- </div>
+                        <div class="col col-1" data-label="<?= t('table.date') ?>"> --- </div>
+                        <div class="col col-2" data-label="<?= t('table.label') ?>"> --- </div>
+                        <div class="col col-3" data-label="<?= t('table.amount') ?>"> --- </div>
+                        <div class="col col-4" data-label="<?= t('table.category') ?>"> --- </div>
                     </li>
                 <?php endfor; ?>
             </div>
         </ul>
-        <a id="create-transfer" class="valide_button noselect" href="/app/operations">Add Operation</a>
+        <a id="create-transfer" class="valide_button noselect" href="/app/operations"><?= t('home.add_operation') ?></a>
     </section>
 
     <!-- col gauche avec liste mouvement bancaire récent X dernier à partir de date ajd -->

@@ -6,8 +6,8 @@ require_once $_SERVER['DOCUMENT_ROOT'] . '/controler/helpers/auth.php';
 requireLogin();
 
 // Variables page
-$title = "Home";
-$page_name = "Overview";
+$title = t('page_title.home');
+$page_name = t('nav.overview');
 
 // Show Template
 require $_SERVER['DOCUMENT_ROOT'] . '/public/view/helpers/header.php';

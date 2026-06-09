@@ -1,5 +1,6 @@
 <?php
 require_once($_SERVER['DOCUMENT_ROOT'] . '/database/api/v1/apiUtils.php');
+require_once($_SERVER['DOCUMENT_ROOT'] . '/controler/helpers/lang.php');
 
 function requireLogin() {
     if (session_status() !== PHP_SESSION_ACTIVE) session_start();

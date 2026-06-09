@@ -5,8 +5,8 @@ require_once $_SERVER['DOCUMENT_ROOT'] . '/controler/helpers/auth.php';
 requireLogin();
 
 
-$title = "Verification";
-$page_name = "Verification";
+$title = t('page_title.verification');
+$page_name = t('page_title.verification');
 
 require $_SERVER['DOCUMENT_ROOT'] . '/public/view/helpers/header.php';
 require $_SERVER['DOCUMENT_ROOT'] . '/public/view/verification.php';

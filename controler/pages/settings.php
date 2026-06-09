@@ -4,8 +4,8 @@ require_once $_SERVER['DOCUMENT_ROOT'] . '/controler/helpers/auth.php';
 
 requireLogin();
 
-$title = "Settings";
-$page_name = "Settings";
+$title = t('page_title.settings');
+$page_name = t('page_title.settings');
 
 $username = $_SESSION['username'] ?? '';
 

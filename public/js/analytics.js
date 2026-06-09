@@ -31,7 +31,7 @@ function set_operation_type_list() {
             operation_type_list = JSON.parse(xhr.responseText).data;
 
             for (let i = 0; i < 9; i++) {
-                pie_labels[i] = operation_type_list[i].title;
+                pie_labels[i] = translate_category(operation_type_list[i].title);
                 pie_colors[i] = operation_type_list[i].chart_color;
             }
         }
@@ -118,7 +118,7 @@ onload = () => {
                     },
                     title: {
                         display: true,
-                        text: 'Expenses by category'
+                        text: t('analytics.chart_expenses_by_category')
                     },
                 }
             },
@@ -146,7 +146,7 @@ function fill_account_list() {
             accounts = JSON.stringify(accounts_list);
 
             if (accounts_list.length == 0) {
-                new_popup("There is no account yet", "info");
+                new_popup(t('analytics.no_account'), "info");
                 document.getElementById("analytics-form").disabled = true;
                 return;
             }
@@ -199,7 +199,7 @@ function get_operations() {
             operations = JSON.parse(xhr.responseText).data;
 
             if (operations.length == 0) {
-                new_popup("There is no operation in this period", "info");
+                new_popup(t('analytics.no_operations'), "info");
             }
 
             // Security if there is no operation at the start of the chart
@@ -211,7 +211,7 @@ function get_operations() {
                     operations.push({ ["date"]: analytics_end.value, ["new_sold"]: operations[operations.length - 1].new_sold });
                 }
                 else {
-                    new_popup("Error getting operations", "error");
+                    new_popup("Error getting balance", "error");
                 }
             };
             xhr2.send();
@@ -300,7 +300,7 @@ function forecast(data) {
 
     var prev = {
         stepped: false,
-        label: "Predicted",
+        label: t('analytics.chart_predicted'),
         data: regressionData,
         borderColor: 'rgb(99, 132, 255)',
         pointStyle: false,

@@ -6,8 +6,8 @@ requireLogin();
 
 
 
-$title = "Budget";
-$page_name = "Budget";
+$title = t('page_title.budget');
+$page_name = t('page_title.budget');
 
 require $_SERVER['DOCUMENT_ROOT'] . '/public/view/helpers/header.php';
 require $_SERVER['DOCUMENT_ROOT'] . '/public/view/budget.php';

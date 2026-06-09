@@ -28,7 +28,7 @@ let savings_chart = new Chart(
             labels: fake_data.map(row => row.year),
             datasets: [
                 {
-                    label: 'Acquisitions by year',
+                    label: t('home.chart_evolution_of'),
                     data: fake_data.map(row => row.count),
                     fill: "start",
                     hoverOffset: 4,
@@ -61,7 +61,7 @@ let savings_chart = new Chart(
             plugins: {
                 title: {
                     display: true,
-                    text: 'Evolution of: Example Account',
+                    text: t('home.chart_evolution_of') + ': Example Account',
                     position: 'top'
                 },
                 legend: {
@@ -117,7 +117,7 @@ onload = () => {
             accounts = JSON.parse(xhr.responseText).data;
 
             if (accounts.length == 0) {
-                new_popup("There is no account yet", "info");
+                new_popup(t('home.no_account'), "info");
                 return;
             }
 
@@ -142,10 +142,10 @@ function set_operation_type_list() {
         if (Math.floor(xhr.status / 100) === 2) {
             operation_type_list = JSON.parse(xhr.responseText).data;
 
-            pie_labels = ["Remains"];
+            pie_labels = [t('home.chart_remains')];
             pie_colors = ["#36a2eb"];
             for (let i = 0; i < 9; i++) {
-                pie_labels[i + 1] = operation_type_list[i].title;
+                pie_labels[i + 1] = translate_category(operation_type_list[i].title);
                 pie_colors[i + 1] = operation_type_list[i].chart_color;
             }
         }
@@ -175,7 +175,7 @@ function fill_dataset() {
                 datasheet.children[nb_operations - i - 1].children[0].innerHTML = new Date(operations[i].date).toLocaleDateString("fr-FR");
                 datasheet.children[nb_operations - i - 1].children[1].innerHTML = operations[i].label;
                 datasheet.children[nb_operations - i - 1].children[2].innerHTML = (operations[i].amount > 0 ? "+" : "") + operations[i].amount.toFixed(2) + " €";
-                datasheet.children[nb_operations - i - 1].children[3].innerHTML = operation_type_list[operations[i].category].title;
+                datasheet.children[nb_operations - i - 1].children[3].innerHTML = translate_category(operation_type_list[operations[i].category].title);
             }
         }
         else {
@@ -237,7 +237,7 @@ function set_log_charts() {
 
             savings_chart.options.plugins.title = {
                 display: true,
-                text: `Evolution of: ${highest_account.label}`,
+                text: `${t('home.chart_evolution_of')}: ${highest_account.label}`,
                 position: 'top'
             };
 
@@ -258,6 +258,10 @@ function set_pie_chart() {
         if (accounts[i].type == 0) {
             checking_accounts.push(accounts[i]);
         }
+    }
+    if (checking_accounts.length == 0) {
+        new_popup(t('budget.no_checking_account'), "info");
+        return;
     }
     const random_checking_account = checking_accounts[Math.floor(Math.random() * checking_accounts.length)];
 
@@ -305,7 +309,7 @@ function set_pie_chart() {
 
             budget_chart.options.plugins.title = {
                 display: true,
-                text: `Monthly budget of: ${random_checking_account.label}`,
+                text: `${t('home.chart_monthly_budget_of')}: ${random_checking_account.label}`,
                 position: 'left'
             };
 

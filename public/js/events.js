@@ -47,7 +47,7 @@ function set_select_category() {
         if (account.id_account == account_list.value) {
             operation_type_list.forEach(operation_type => {
                 if (operation_type.account_type == account.type) {
-                    select_category.innerHTML += `<option value="${operation_type.id}">${operation_type.title}</option>`;
+                    select_category.innerHTML += `<option value="${operation_type.id}">${translate_category(operation_type.title)}</option>`;
                 }
             });
         }
@@ -55,7 +55,7 @@ function set_select_category() {
 
     operation_type_list.forEach(operation_type => {
         if (operation_type.account_type == -1) {
-            select_category.innerHTML += `<option value="${operation_type.id}">${operation_type.title}</option>`;
+            select_category.innerHTML += `<option value="${operation_type.id}">${translate_category(operation_type.title)}</option>`;
         }
     });
 }
@@ -77,10 +77,10 @@ function delete_element(event_id) {
     xhr.onload = () => {
         if (Math.floor(xhr.status / 100) === 2) {
             update_datasheet();
-            new_popup("Event deleted", "success");
+            new_popup(t('events.delete_success'), "success");
         }
         else {
-            new_popup("Error deleting operation", "error");
+            new_popup(t('events.delete_error'), "error");
         }
     }
     xhr.send(JSON.stringify({ id: event_id }));
@@ -99,17 +99,17 @@ function update_datasheet() {
 
             if (nb_events == 0) {
                 datasheet.innerHTML += `<li class="table-row">
-                    <div class="col col-1" data-label="Label"> No regular event in this time </div>
-                    <div class="col col-2" data-label="Amount"> --- </div>
-                    <div class="col col-3" data-label="Account"> --- </div>
-                    <div class="col col-4" data-label="Start"> --- </div>
-                    <div class="col col-5" data-label="End"> --- </div>
-                    <div class="col col-6" data-label="Frequency"> --- </div>
-                    <div class="col col-7" data-label="Category"> --- </div>
-                    <div class="col col-8" data-label="Actions"> --- </div>
+                    <div class="col col-1" data-label="${t('table.label')}"> ${t('events.no_event')} </div>
+                    <div class="col col-2" data-label="${t('table.amount')}"> --- </div>
+                    <div class="col col-3" data-label="${t('table.account')}"> --- </div>
+                    <div class="col col-4" data-label="${t('table.start')}"> --- </div>
+                    <div class="col col-5" data-label="${t('table.end')}"> --- </div>
+                    <div class="col col-6" data-label="${t('table.frequency')}"> --- </div>
+                    <div class="col col-7" data-label="${t('table.category')}"> --- </div>
+                    <div class="col col-8" data-label="${t('table.actions')}"> --- </div>
                 </li>`;
 
-                new_popup("There is no event at this date", "info");
+                new_popup(t('events.no_event'), "info");
             }
             else {
                 // trier events par label
@@ -125,14 +125,14 @@ function update_datasheet() {
 
                 for (let i = 0; i < nb_events; i++) {
                     datasheet.innerHTML += `<li class="table-row">
-                        <div class="col col-1" data-label="Label"> ${events[i].label} </div>
-                        <div class="col col-2" data-label="Amount"> ${events[i].amount.toFixed(2)} € </div>
-                        <div class="col col-3" data-label="Account"> ${accounts.find(account => account.id_account === events[i].id_account).label} </div>
-                        <div class="col col-4" data-label="Start"> ${new Date(events[i].start).toLocaleDateString("fr-FR")} </div>
-                        <div class="col col-5" data-label="End"> ${new Date(events[i].end).toLocaleDateString("fr-FR")} </div>
-                        <div class="col col-6" data-label="Frequency"> ${events[i].frequency_type == 0 ? "Every Day" : events[i].frequency_type == 1 ? "Every Week" : events[i].frequency_type == 2 ? "Every Month" : "Every Year"} </div>
-                        <div class="col col-7" data-label="Category"> ${operation_type_list[events[i].category].title} </div>
-                        <div class="col col-8" data-label="Actions"> --- </div>
+                        <div class="col col-1" data-label="${t('table.label')}"> ${events[i].label} </div>
+                        <div class="col col-2" data-label="${t('table.amount')}"> ${events[i].amount.toFixed(2)} € </div>
+                        <div class="col col-3" data-label="${t('table.account')}"> ${accounts.find(account => account.id_account === events[i].id_account).label} </div>
+                        <div class="col col-4" data-label="${t('table.start')}"> ${new Date(events[i].start).toLocaleDateString("fr-FR")} </div>
+                        <div class="col col-5" data-label="${t('table.end')}"> ${new Date(events[i].end).toLocaleDateString("fr-FR")} </div>
+                        <div class="col col-6" data-label="${t('table.frequency')}"> ${events[i].frequency_type == 0 ? t('events.every_day') : events[i].frequency_type == 1 ? t('events.every_week') : events[i].frequency_type == 2 ? t('events.every_month') : t('events.every_year')} </div>
+                        <div class="col col-7" data-label="${t('table.category')}"> ${translate_category(operation_type_list[events[i].category].title)} </div>
+                        <div class="col col-8" data-label="${t('table.actions')}"> --- </div>
                     </li>`;
 
                     if (events[i].amount > 0) {
@@ -148,7 +148,7 @@ function update_datasheet() {
             }
         }
         else {
-            new_popup("Error getting events code #1", "error");
+            new_popup("Error getting events", "error");
         }
     }
     xhr.send();
@@ -163,7 +163,7 @@ function fill_account_list() {
             accounts = response.data;
 
             if (accounts.length == 0) {
-                new_popup("There is no account yet", "info");
+                new_popup(t('events.no_account'), "info");
                 document.getElementById("event-form").disabled = true;
                 return;
             }
@@ -195,7 +195,7 @@ function create_event() {
     }
 
     if (label == "" || amount == "" || category == "" || start == "" || end == "" || frequency == "" || account == 0) {
-        new_popup("Please fill all the fields", "warn");
+        new_popup(t('events.fill_fields'), "warn");
     }
     else {
         var xhr = new XMLHttpRequest();
@@ -212,10 +212,10 @@ function create_event() {
                 end_field.value = "";
                 frequency_field.value = 0;
 
-                new_popup("Event created", "success");
+                new_popup(t('events.create_success'), "success");
             }
             else {
-                new_popup("Unknow error creating event", "error");
+                new_popup(t('events.create_error'), "error");
             }
         };
         xhr.send(JSON.stringify({ id_account: account_list.value, label, amount, category, start, end, frequency }));
@@ -231,35 +231,35 @@ function edit_element(id, element) {
     start.setDate(start.getDate() + 1);
     end.setDate(end.getDate() + 1);
 
-    let frequency = card.children[5].innerHTML == " Every Day " ? 0 : card.children[5].innerHTML == " Every Week " ? 1 : card.children[5].innerHTML == " Every Month " ? 2 : 3;
+    let frequency = card.children[5].innerHTML.trim() == t('events.every_day') ? 0 : card.children[5].innerHTML.trim() == t('events.every_week') ? 1 : card.children[5].innerHTML.trim() == t('events.every_month') ? 2 : 3;
 
     let category = 0;
     operation_type_list.forEach(operation_type => {
-        if (" " + operation_type.title + " " == card.children[6].innerHTML.replace(/&amp;/g, "&")) {
+        if (" " + translate_category(operation_type.title) + " " == card.children[6].innerHTML.replace(/&amp;/g, "&")) {
             category = operation_type.id;
         }
     });
 
     card.onclick = "";
     card.innerHTML = `
-        <input class="col col-1" data-label="Label" value="${card.children[0].innerHTML.slice(1, -1)}" />
-        <input class="col col-2" data-label="Amount" type="number" value="${card.children[1].innerHTML.slice(1, -3)}" />
-        <input class="col col-3" data-label="Account" disabled/ value="${card.children[2].innerHTML}">
-        <input class="col col-4" data-label="Start" type="date" />
-        <input class="col col-5" data-label="End" type="date" />
+        <input class="col col-1" data-label="${t('table.label')}" value="${card.children[0].innerHTML.slice(1, -1)}" />
+        <input class="col col-2" data-label="${t('table.amount')}" type="number" value="${card.children[1].innerHTML.slice(1, -3)}" />
+        <input class="col col-3" data-label="${t('table.account')}" disabled/ value="${card.children[2].innerHTML}">
+        <input class="col col-4" data-label="${t('table.start')}" type="date" />
+        <input class="col col-5" data-label="${t('table.end')}" type="date" />
 
-        <select class="col col-6" data-label="Frequency">
-            <option value="3">Every year</option>
-            <option value="2">Every month</option>
-            <option value="1">Every week</option>
-            <option value="0">Every day</option>
+        <select class="col col-6" data-label="${t('table.frequency')}">
+            <option value="3">${t('events.every_year')}</option>
+            <option value="2">${t('events.every_month')}</option>
+            <option value="1">${t('events.every_week')}</option>
+            <option value="0">${t('events.every_day')}</option>
         </select>
 
-        <select class="col col-7" data-label="Category" id="category_edit">
+        <select class="col col-7" data-label="${t('table.category')}" id="category_edit">
             ${set_select_category_for_edit()}
         </select>
 
-        <div class="col col-8" data-label="Actions">
+        <div class="col col-8" data-label="${t('table.actions')}">
             <img src="/assets/images/confirm.png" alt="confirm" class="card-button" onclick='confirm_edit_element(this.parentNode.parentNode.children[0].value, this.parentNode.parentNode.children[1].value, this.parentNode.parentNode.children[3].value, this.parentNode.parentNode.children[4].value, this.parentNode.parentNode.children[5].value, this.parentNode.parentNode.children[6].value, ${id},this)'>
             <img src="/assets/images/cancel.png" alt="cancel" class="card-button" onclick="update_datasheet()">
         </div>`;
@@ -286,7 +286,7 @@ function parseFrenchDate(dateText) {
 function set_select_category_for_edit() {
     let temp;
     operation_type_list.forEach(operation_type => {
-        temp += `<option value="${operation_type.id}">${operation_type.title}</option>`;
+        temp += `<option value="${operation_type.id}">${translate_category(operation_type.title)}</option>`;
     })
     return temp;
 }
@@ -297,7 +297,7 @@ function confirm_edit_element(label, amount, start, end, frequency, category, id
     }
 
     if (label == "" || amount == "" || start == "" || end == "" || frequency == "" || category == "") {
-        new_popup("Please fill all the fields", "warn");
+        new_popup(t('events.fill_fields'), "warn");
     }
     else {
         element.parentNode.innerHTML = `<img src="/assets/images/load.gif" alt="load" class="card-button">`;
@@ -306,11 +306,11 @@ function confirm_edit_element(label, amount, start, end, frequency, category, id
         xhr.setRequestHeader("Content-Type", "application/json");
         xhr.onload = () => {
             if (Math.floor(xhr.status / 100) === 2) {
-                new_popup("Event updated", "success");
+                new_popup(t('events.update_success'), "success");
                 fill_account_list();
             }
             else {
-                new_popup("Error updating event", "error")
+                new_popup(t('events.update_error'), "error")
             }
         }
         xhr.send(JSON.stringify({ id, label, amount, start, end, frequency, category }));
