@@ -8,7 +8,7 @@
     <fieldset id="analytics-form">
         <div class="row-field">
             <select name="selected-checking-account" id="selected-checking-account">
-                <option value="0"> Select a checking account </option>
+                <option value="0"><?= trans('budget.select_checking') ?></option>
             </select>
             <input type="month" name="selected-month" id="selected-month" disabled>
         </div>
@@ -17,34 +17,34 @@
     <section class="analytics-charts" id="checking-analytics-charts">
         <div id="checking-account-pannel">
             <fieldset id="checking-account-fieldset">
-                <legend>Account info</legend>
+                <legend><?= trans('budget.account_info') ?></legend>
                 <div class="row-field">
-                    <label for="account-incomes">Month incomes</label>
+                    <label for="account-incomes"><?= trans('budget.month_incomes') ?></label>
                     <span><input type="text" name="account-incomes" id="account-incomes" disabled>€</span>
                 </div>
                 <div class="row-field">
-                    <label for="account-expenses">Month expenses</label>
+                    <label for="account-expenses"><?= trans('budget.month_expenses') ?></label>
                     <span><input type="text" name="account-expenses" id="account-expenses" disabled>€</span>
                 </div>
                 <div class="row-field">
-                    <label for="account-remains">Month remains</label>
+                    <label for="account-remains"><?= trans('budget.month_remains') ?></label>
                     <span><input type="text" name="account-remains" id="account-remains" disabled>€</span>
                 </div>
                 <div class="row-field">
-                    <label for="account-expected-savings">Expected savings</label>
+                    <label for="account-expected-savings"><?= trans('budget.expected_savings') ?></label>
                     <section><input type="number" name="account-expected-savings" id="account-expected-savings"
                             disabled>€</section>
                 </div>
             </fieldset>
             <fieldset id="additional-expenditure-fieldset" disabled>
-                <legend>Additional expenditure</legend>
+                <legend><?= trans('budget.additional_expenditure') ?></legend>
                 <section id="additional-expenditure-section">
                     <div class="row-field">
                         <section>
                             <input type="text" name="label-additional-expenditure" class="label-additional-expenditure"
-                                placeholder="Label">
+                                placeholder="<?= trans('table.label') ?>">
                             <input type="number" name="account-additional-expenditure"
-                                class="account-additional-expenditure" placeholder="Amount"
+                                class="account-additional-expenditure" placeholder="<?= trans('table.amount') ?>"
                                 onchange="update_charts()"><span> €</span>
                         </section>
                         <img src="/assets/images/trash.png" class="button" alt="delete" class="card-button"
@@ -54,7 +54,7 @@
                 <div class="row-field bottom-info">
                     <img src="/assets/images/plus.webp" class="button add-button" alt="add" class="card-button"
                         onclick="add_expenditure()">
-                    <span>Total expected expenditure : <span id="total-add-expenditure">0</span> €</span>
+                    <span><?= trans('budget.total_expected') ?> : <span id="total-add-expenditure">0</span> €</span>
                 </div>
             </fieldset>
             <div id="checking-account-info">
@@ -65,23 +65,23 @@
                 canvas element.</canvas>
         </div>
     </section>
-    
+
     <section class="dashboard">
         <section class="container">
             <ul class="responsive-table">
                 <li class="table-header">
-                    <div class="col col-1">Date</div>
-                    <div class="col col-2">Label</div>
-                    <div class="col col-3">Amount</div>
-                    <div class="col col-4">Category</div>
+                    <div class="col col-1"><?= trans('table.date') ?></div>
+                    <div class="col col-2"><?= trans('table.label') ?></div>
+                    <div class="col col-3"><?= trans('table.amount') ?></div>
+                    <div class="col col-4"><?= trans('table.category') ?></div>
                 </li>
                 <div id="datasheet" class="budget-account-div">
                     <?php for ($i = 0; $i < 14; $i++): ?>
                         <li class="table-row">
-                            <div class="col col-1" data-label="Date"> --- </div>
-                            <div class="col col-2" data-label="Label"> --- </div>
-                            <div class="col col-3" data-label="Amount"> --- </div>
-                            <div class="col col-4" data-label="Category"> --- </div>
+                            <div class="col col-1" data-label="<?= trans('table.date') ?>"> --- </div>
+                            <div class="col col-2" data-label="<?= trans('table.label') ?>"> --- </div>
+                            <div class="col col-3" data-label="<?= trans('table.amount') ?>"> --- </div>
+                            <div class="col col-4" data-label="<?= trans('table.category') ?>"> --- </div>
                         </li>
                     <?php endfor; ?>
                 </div>
@@ -94,7 +94,7 @@
             </div>
             <div>
                 <input type="checkbox" id="logarithmic-axis" name="logarithmic-axis">
-                <label for="logarithmic-axis">Logarithmic axis</label>
+                <label for="logarithmic-axis"><?= trans('budget.logarithmic_axis') ?></label>
             </div>
         </section>
     </section>

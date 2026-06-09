@@ -42,13 +42,13 @@ onload = () => {
 
             if (accounts.length == 0) {
                 datasheet.innerHTML = `<li class="table-row">
-                        <div class="col col-1" data-label="Label"> --- </div>
-                        <div class="col col-2" data-label="Sold"> --- </div>
-                        <div class="col col-3" data-label="Type"> --- </div>
+                        <div class="col col-1" data-label="${trans('table.label')}"> --- </div>
+                        <div class="col col-2" data-label="${trans('table.sold')}"> --- </div>
+                        <div class="col col-3" data-label="${trans('table.type')}"> --- </div>
 
-                        <div class="col col-4" data-label="Actions"> </div>
+                        <div class="col col-4" data-label="${trans('table.actions')}"> </div>
                     </tr>`;
-                new_popup("There is no account yet", "info");
+                new_popup(trans('accounts.no_account'), "info");
                 document.getElementById("loading-gif").style.display = "none";
                 return;
             }
@@ -56,18 +56,18 @@ onload = () => {
             accounts.forEach(account => {
                 datasheet.innerHTML += `
                     <li id="card-${account.id_account}" onclick="manage_account_transfer(${account.id_account})" class="table-row">
-                        <div class="col col-1" data-label="Label">${get_account_icon(account)}<span class="account-label">${account.label}</span></div>
-                        <div class="col col-2" data-label="Sold">${account.sold.toFixed(2)} € </div>
-                        <div class="col col-3" data-label="Type">${account.type ? "Savings account" : "Checking account"}</div>
+                        <div class="col col-1" data-label="${trans('table.label')}">${get_account_icon(account)}<span class="account-label">${account.label}</div>
+                        <div class="col col-2" data-label="${trans('table.sold')}">${account.sold.toFixed(2)} € </div>
+                        <div class="col col-3" data-label="${trans('table.type')}">${account.type ? trans('accounts.saving_account') : trans('accounts.checking_account')}</div>
 
-                        <div class="col col-4" data-label="Actions">
+                        <div class="col col-4" data-label="${trans('table.actions')}">
                             <img src="/assets/images/edit.png" alt="edit" class="card-button" onclick="edit_element(event, ${account.id_account}, this)">
                             <img src="/assets/images/trash.png" alt="delete" class="card-button" onclick="confirm_popup_delete_element(event, ${account.id_account}, '${account.label}')">
                         </div>
                     </tr>`;
             });
 
-            total_sold.innerHTML = "Total: " + accounts.reduce((acc, account) => acc + account.sold, 0).toFixed(2) + " €";
+            total_sold.innerHTML = trans('accounts.total') + ": " + accounts.reduce((acc, account) => acc + account.sold, 0).toFixed(2) + " €";
         }
         else {
             new_popup("Error getting accounts", "error")
@@ -158,7 +158,7 @@ function transfer_animation_off(id) {
 
 function process_transfer() {
     if (transfer_data[0] == null || transfer_data[1] == null || date.value == "" || amount.value == "") {
-        new_popup("Please fill all fields", "warn");
+        new_popup(trans('accounts.fill_fields'), "warn");
     }
     else {
         label_val = label.value == "" ? get_account_shortname() : label.value;
@@ -169,11 +169,11 @@ function process_transfer() {
 
         xhr.onload = () => {
             if (Math.floor(xhr.status / 100) === 2) {
-                new_popup("Transaction process", "success");
+                new_popup(trans('accounts.transfer_success'), "success");
                 undo_transfer();
             }
             else {
-                new_popup("Error process transaction", "error")
+                new_popup(trans('accounts.transfer_error'), "error")
             }
         }
         xhr.send(JSON.stringify({ from: transfer_data[0], to: transfer_data[1], label: label_val, date: date.value, amount: amount.value }));
@@ -228,7 +228,7 @@ function create_account() {
         const acc_sold = document.getElementById("create-account-sold");
 
         if (acc_label.value == "" || acc_type.value == "") {
-            new_popup("Please fill all fields", "warn");
+            new_popup(trans('accounts.fill_fields'), "warn");
         }
         else {
             if (acc_sold.value == "") {
@@ -240,7 +240,7 @@ function create_account() {
             xhr.setRequestHeader("Content-Type", "application/json");
             xhr.onload = () => {
                 if (Math.floor(xhr.status / 100) === 2) {
-                    new_popup("Account created", "success");
+                    new_popup(trans('accounts.create_success'), "success");
                     acc_label.value = "";
                     acc_sold.value = "";
                     onload();
@@ -248,7 +248,7 @@ function create_account() {
                     create_account_button.style.display = "";
                 }
                 else {
-                    new_popup("Error creating account", "error")
+                    new_popup(trans('accounts.create_error'), "error")
                 }
             }
             xhr.send(JSON.stringify({ label: acc_label.value, type: acc_type.value, sold: acc_sold.value }));
@@ -268,13 +268,13 @@ function edit_element(event, id, element) {
 
     card.onclick = "";
     card.innerHTML = `
-        <input class="col col-1" data-label="Label" value="${card.querySelector(".account-label").innerHTML}" />
-        <input class="col col-2" data-label="Sold" type="number" value="${card.children[1].innerHTML.slice(0, -3)}" />
-        <select class="col col-3" data-label="Type">
-            <option value="0">Checking account</option>
-            <option value="1" ${card.children[2].innerHTML == "Savings account" ? "selected" : ""}>Savings account</option>
+        <input class="col col-1" data-label="${trans('table.label')}" value="${card.querySelector(".account-label").innerHTML}" />
+        <input class="col col-2" data-label="${trans('table.sold')}" type="number" value="${card.children[1].innerHTML.slice(0, -3)}" />
+        <select class="col col-3" data-label="${trans('table.type')}">
+            <option value="0">${trans('accounts.checking_account')}</option>
+            <option value="1" ${card.children[2].innerHTML == trans('accounts.saving_account') ? "selected" : ""}>${trans('accounts.saving_account')}</option>
         </select>
-        <div class="col col-4" data-label="Actions">
+        <div class="col col-4" data-label="${trans('table.actions')}">
             <img src="/assets/images/confirm.png" alt="confirm" class="card-button" onclick='confirm_edit_element(this.parentNode.parentNode.children[0].value, this.parentNode.parentNode.children[1].value, this.parentNode.parentNode.children[2].value, ${id})'>
             <img src="/assets/images/cancel.png" alt="cancel" class="card-button" onclick="f_onload()">
         </div>`;
@@ -286,7 +286,7 @@ function edit_element(event, id, element) {
 
 function confirm_edit_element(label, sold, type, id) {
     if (label == "" || type == "" || sold == "") {
-        new_popup("Please fill all fields", "warn");
+        new_popup(trans('accounts.fill_fields'), "warn");
     }
     else {
         var xhr = new XMLHttpRequest();
@@ -294,11 +294,11 @@ function confirm_edit_element(label, sold, type, id) {
         xhr.setRequestHeader("Content-Type", "application/json");
         xhr.onload = () => {
             if (Math.floor(xhr.status / 100) === 2) {
-                new_popup("Account updated", "success");
+                new_popup(trans('accounts.update_success'), "success");
                 onload();
             }
             else {
-                new_popup("Error updating account", "error")
+                new_popup(trans('accounts.update_error'), "error")
             }
         }
         xhr.send(JSON.stringify({ id, label, sold, type }));
@@ -328,11 +328,11 @@ function delete_element(id) {
     xhr.setRequestHeader("Content-Type", "application/json");
     xhr.onload = () => {
         if (Math.floor(xhr.status / 100) === 2) {
-            new_popup("Account deleted", "success");
+            new_popup(trans('accounts.delete_success'), "success");
             onload();
         }
         else {
-            new_popup("Error deleting account", "error")
+            new_popup(trans('accounts.delete_error'), "error")
         }
     }
     xhr.send(JSON.stringify({ id }));

@@ -2,24 +2,30 @@
 
 <section id="settings-board">
     <div class="settings-card">
-        <h2>Paramètres</h2>
+        <h2><?= trans('settings.title') ?></h2>
 
         <div class="settings-group">
-            <label for="username">Nom d'utilisateur</label>
-            <input type="text" id="input-username" value="<?= htmlspecialchars($username) ?>" placeholder="Entrez votre nom d'utilisateur">
+            <label for="username"><?= trans('settings.username') ?></label>
+            <input type="text" id="input-username" value="<?= htmlspecialchars($username) ?>" placeholder="<?= trans('settings.username_placeholder') ?>">
         </div>
 
         <div class="settings-group">
-            <label for="opt-langue">Langue</label>
-            <select id="opt-langue"></select>
+            <label for="opt-langue"><?= trans('settings.language') ?></label>
+            <select id="opt-langue">
+                <?php foreach ($languages as $lang): ?>
+                    <option value="<?= htmlspecialchars($lang['code']) ?>"<?= $lang['code'] === $current_lang ? ' selected' : '' ?>>
+                        <?= htmlspecialchars($lang['label']) ?>
+                    </option>
+                <?php endforeach; ?>
+            </select>
         </div>
 
         <div class="settings-group settings-group--inline">
-            <label for="opt-theme">Thème sombre</label>
+            <label for="opt-theme"><?= trans('settings.dark_theme') ?></label>
             <input type="checkbox" id="opt-theme">
         </div>
 
-        <button class="valide_button" onclick="saveSettings()">Sauvegarder</button>
+        <button class="valide_button" onclick="saveSettings()"><?= trans('settings.save') ?></button>
     </div>
 </section>
 

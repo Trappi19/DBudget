@@ -8,6 +8,7 @@ class User
     private $username;
     private $password;
     private $salt;
+    private $lang;
 
     public function __construct($email)
     {
@@ -25,6 +26,7 @@ class User
         $this->username = $result['username'];
         $this->password = $result['password'];
         $this->salt = $result['salt'];
+        $this->lang = $result['lang'] ?? 'English';
     }
     public function __destruct()
     {
@@ -35,13 +37,14 @@ class User
     {
         global $db;
 
-        $query = $db->prepare('UPDATE user SET username = :username, password = :password, salt = :salt WHERE email = :email');
+        $query = $db->prepare('UPDATE user SET username = :username, password = :password, salt = :salt, lang = :lang WHERE email = :email');
 
         $query->execute([
             'email' => $this->email,
             'username' => $this->username,
             'password' => $this->password,
-            'salt' => $this->salt
+            'salt' => $this->salt,
+            'lang' => $this->lang
         ]);
     }
 
@@ -72,6 +75,18 @@ class User
     public function setSalt($salt)
     {
         $this->salt = $salt;
+    }
+    public function getLang()
+    {
+        return $this->lang;
+    }
+    public function setLang($lang)
+    {
+        $allowed = array_map(
+            fn($f) => basename($f, '.json'),
+            glob($_SERVER['DOCUMENT_ROOT'] . '/lang/*.json')
+        );
+        $this->lang = in_array($lang, $allowed) ? $lang : 'English';
     }
 
     public static function createPassword($rawPassword)

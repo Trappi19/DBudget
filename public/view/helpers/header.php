@@ -1,5 +1,6 @@
+<?php require_once $_SERVER['DOCUMENT_ROOT'] . '/controler/helpers/lang.php'; ?>
 <!DOCTYPE html>
-<html lang="en">
+<html lang="<?= get_locale() ?>">
 
 <head>
 	<meta charset="UTF-8">
@@ -9,6 +10,7 @@
 	<link rel="manifest" href="/public/manifest.json">
 	<meta name="theme-color" content="#424549" />
 
+	<script>window.APP_LANG = <?= get_lang_json() ?>;</script>
 	<script src="/public/js/utils.js" type="text/javascript"></script>
 	<script src="/public/js/navbar.js" type="text/javascript"></script>
 	<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
@@ -40,13 +42,13 @@
 	<div class="corner-back"></div>
 	<ul id="side-menu">
 		<div class="corner"></div>
-		<li><a href="/app/home">Overview</a></li>
-		<li><a href="/app/accounts">Accounts</a></li>
-		<li><a href="/app/budget">Budget</a></li>
-		<li><a href="/app/analytics">Analytics</a></li>
-		<li><a href="/app/operations">Operations</a></li>
-		<li><a href="/app/verification">Verification</a></li>
-		<li><a href="/app/events">Events</a></li>
+		<li><a href="/app/home"><?= trans('home.nav') ?></a></li>
+		<li><a href="/app/accounts"><?= trans('accounts.nav') ?></a></li>
+		<li><a href="/app/budget"><?= trans('budget.nav') ?></a></li>
+		<li><a href="/app/analytics"><?= trans('analytics.nav') ?></a></li>
+		<li><a href="/app/operations"><?= trans('operations.nav') ?></a></li>
+		<li><a href="/app/verification"><?= trans('verification.nav') ?></a></li>
+		<li><a href="/app/events"><?= trans('events.nav') ?></a></li>
 		<li><a id="settings-menu" href="/app/settings"><span class="material-icons">settings</span></a></li>
 </ul>
 

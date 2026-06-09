@@ -12,6 +12,7 @@ if (isset($_GET['input_email']) && isset($_GET['input_password'])) {
         $user = new User($email);
         $_SESSION['email'] = $email;
         $_SESSION['username'] = $user->getUsername();
+        $_SESSION['lang'] = $user->getLang();
         header("Location: " . ($_SESSION['redirect'] ?? '/app/home'));
         exit();
     } else {

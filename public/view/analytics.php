@@ -2,15 +2,15 @@
 <link rel="stylesheet" href="/public/styles/pages/analytics/analytics.css">
 
 <section id="phone-warning">
-    <h1>Sorry, this page is not properly displayed on mobile devices.</h1>
-    <h2>Please use a computer to fully enjoy the analytics page.</h2>
+    <h1><?= trans('analytics.phone_warning') ?></h1>
+    <h2><?= trans('analytics.phone_warning_sub') ?></h2>
 </section>
 
 <section id="analytics-board">
     <fieldset id="analytics-form">
         <div class="row-field">
             <select name="selected-account" id="selected-account">
-                <option value="0"> Select an account </option>
+                <option value="0"><?= trans('analytics.select_account') ?></option>
             </select>
             <input type="date" name="start" id="analytics-start" disabled>
             <input type="date" name="end" id="analytics-end" disabled>
@@ -28,17 +28,17 @@
         <div>
             <div class="forecast-checkbox">
                 <input type="checkbox" id="forecast-toggle" name="forecast-toggle">
-                <label for="forecast-toggle" class="noselect">Enable Forecast</label>
+                <label for="forecast-toggle" class="noselect"><?= trans('analytics.enable_forecast') ?></label>
                 <span id="forecast-info"></span>
             </div>
             <div class="forecast-checkbox">
                 <input type="checkbox" id="forecast-ajust" name="forecast-ajust">
-                <label for="forecast-ajust" class="noselect">Ajust to date</label>
+                <label for="forecast-ajust" class="noselect"><?= trans('analytics.adjust_to_date') ?></label>
             </div>
             <input type="date" name="index" id="analytics-index">
         </div>
         <div>
-            <a id="export-csv-button" class="valide_button no-select" onclick="exportCSV()">Export CSV</a>
+            <a id="export-csv-button" class="valide_button no-select" onclick="exportCSV()"><?= trans('analytics.export_csv') ?></a>
         </div>
     </section>
 

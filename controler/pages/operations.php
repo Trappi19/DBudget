@@ -9,8 +9,8 @@ requireLogin();
 $accounts = Account::getAccountsByUser($_SESSION['email']);
 $operation_types = OperationType::getAll();
 
-$title = "Operations";
-$page_name = "Operations";
+$title = trans('operations.title');
+$page_name = trans('operations.nav');
 
 require $_SERVER['DOCUMENT_ROOT'] . '/public/view/helpers/header.php';
 require $_SERVER['DOCUMENT_ROOT'] . '/public/view/operations.php';

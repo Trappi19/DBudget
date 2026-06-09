@@ -4,12 +4,12 @@ require_once $_SERVER['DOCUMENT_ROOT'] . '/controler/helpers/auth.php';
 
 requireLogin();
 
-$title = "Erreur 404 - Page non trouvée";
-$page_name = "Error 404";
+$title = trans('error_404.title');
+$page_name = trans('error_404.nav');
 
 $error_code = 404;
-$error_message = "Page non trouvée";
-$error_description = "La page que vous cherchez n'existe pas ou a été déplacée.";
+$error_message = trans('error_404.error_message');
+$error_description = trans('error_404.error_description');
 
 http_response_code(404);
 

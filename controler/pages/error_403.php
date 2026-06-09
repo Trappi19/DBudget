@@ -4,12 +4,12 @@ require_once $_SERVER['DOCUMENT_ROOT'] . '/controler/helpers/auth.php';
 
 requireLogin();
 
-$title = "Erreur 403 - Accès refusé";
-$page_name = "Error 403";
+$title = trans('error_403.title');
+$page_name = trans('error_403.nav');
 
 $error_code = 403;
-$error_message = "Accès refusé";
-$error_description = "Vous n'avez pas les permissions nécessaires pour accéder à cette page.";
+$error_message = trans('error_403.error_message');
+$error_description = trans('error_403.error_description');
 
 http_response_code(403);
 

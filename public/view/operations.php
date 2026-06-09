@@ -29,20 +29,20 @@
 
         <ul class="responsive-table">
             <li class="table-header">
-                <div class="col col-1">Date</div>
-                <div class="col col-2">Label</div>
-                <div class="col col-3">Amount</div>
-                <div class="col col-4">Category</div>
-                <div class="col col-5">Actions</div>
+                <div class="col col-1"><?= trans('table.date') ?></div>
+                <div class="col col-2"><?= trans('table.label') ?></div>
+                <div class="col col-3"><?= trans('table.amount') ?></div>
+                <div class="col col-4"><?= trans('table.category') ?></div>
+                <div class="col col-5"><?= trans('table.actions') ?></div>
             </li>
             <div id="datasheet">
                 <?php for ($i = 0; $i < 14; $i++): ?>
                     <li class="table-row">
-                        <div class="col col-1" data-label="Date"> --- </div>
-                        <div class="col col-2" data-label="Label"> --- </div>
-                        <div class="col col-3" data-label="Amount"> --- </div>
-                        <div class="col col-4" data-label="Category"> --- </div>
-                        <div class="col col-5" data-label="Actions"></div>
+                        <div class="col col-1" data-label="<?= trans('table.date') ?>"> --- </div>
+                        <div class="col col-2" data-label="<?= trans('table.label') ?>"> --- </div>
+                        <div class="col col-3" data-label="<?= trans('table.amount') ?>"> --- </div>
+                        <div class="col col-4" data-label="<?= trans('table.category') ?>"> --- </div>
+                        <div class="col col-5" data-label="<?= trans('table.actions') ?>"></div>
                     </li>
                 <?php endfor; ?>
             </div>
@@ -53,14 +53,14 @@
     </section>
 
     <section id="add-pannel" class="container">
-        <h1>Add an operation</h1>
+        <h1><?= trans('operations.add_operation') ?></h1>
 
         <form id="add-form">
 
             <div id="account_selection">
-                <p>Selects the account on which to add an operation</p>
+                <p><?= trans('operations.select_account') ?></p>
                 <select name="selected-account" id="selected-account">
-                    <option value="0"> Select an account </option>
+                    <option value="0"><?= trans('operations.select_account') ?></option>
                     <?php foreach ($accounts as $account): ?>
                         <option value="<?= (int) $account['id_account'] ?>"><?= htmlspecialchars($account['label']) ?></option>
                     <?php endforeach; ?>
@@ -69,28 +69,28 @@
 
             <fieldset id="add-field">
                 <div>
-                    <label for="amount">Amount</label>
+                    <label for="amount"><?= trans('operations.amount') ?></label>
                     <input type="number" name="amount" id="amount" placeholder="100€"
                         required="We need to know how much you want to transfer" step="0.01">
                 </div>
                 <div class="flex-div">
                     <div>
-                        <label for="operation_date">Date</label>
+                        <label for="operation_date"><?= trans('operations.date') ?></label>
                         <input type="date" name="date" id="operation_date" required>
                     </div>
 
                     <div>
-                        <label for="category">Category</label>
+                        <label for="category"><?= trans('table.category') ?></label>
                         <select name="category" id="category">
                         </select>
                     </div>
                 </div>
                 <div>
-                    <label for="label">Label</label>
-                    <input type="text" name="label" id="label" placeholder="Label" required>
+                    <label for="label"><?= trans('operations.label') ?></label>
+                    <input type="text" name="label" id="label" placeholder="<?= trans('operations.label') ?>" required>
                 </div>
 
-                <a id="create-operation" class="valide_button noselect" onclick="create_operation()">Create</a>
+                <a id="create-operation" class="valide_button noselect" onclick="create_operation()"><?= trans('operations.create') ?></a>
 
             </fieldset>
         </form>

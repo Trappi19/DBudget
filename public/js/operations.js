@@ -112,13 +112,13 @@ function set_select_category() {
 
     operation_type_list.forEach(operation_type => {
         if (operation_type.account_type == selected_account.type) {
-            select_category.innerHTML += `<option value="${operation_type.id}">${operation_type.title}</option>`;
+            select_category.innerHTML += `<option value="${operation_type.id}">${translate_category(operation_type.title)}</option>`;
         }
     });
 
     operation_type_list.forEach(operation_type => {
         if (operation_type.account_type == -1) {
-            select_category.innerHTML += `<option value="${operation_type.id}">${operation_type.title}</option>`;
+            select_category.innerHTML += `<option value="${operation_type.id}">${translate_category(operation_type.title)}</option>`;
         }
     });
 }
@@ -142,11 +142,11 @@ function delete_element(element_id) {
     xhr.setRequestHeader("Content-Type", "application/json");
     xhr.onload = () => {
         if (Math.floor(xhr.status / 100) === 2) {
-            new_popup("Operation deleted", "success");
+            new_popup(trans('operations.delete_success'), "success");
             update_datasheet();
         }
         else {
-            new_popup("Error deleting operation", "error")
+            new_popup(trans('operations.delete_error'), "error")
         }
     }
     xhr.send(JSON.stringify({ id: element_id }));
@@ -198,7 +198,7 @@ function update_datasheet() {
             let nb_operations = operations.length;
 
             if (nb_operations == 0) {
-                if (prev_nb_operations != 0) new_popup("There is no operation at this date", "info");
+                if (prev_nb_operations != 0) new_popup(trans('operations.no_operations'), "info");
 
                 let first = datasheet.children[0];
                 
@@ -217,10 +217,10 @@ function update_datasheet() {
                 else {
                     datasheet.children[nb_operations - i - 1].children[2].style.color = "black";
                 }
-                datasheet.children[nb_operations - i - 1].children[0].innerHTML = new Date(operations[i].date).toLocaleDateString("fr-FR");
+                datasheet.children[nb_operations - i - 1].children[0].innerHTML = formatDate(operations[i].date);
                 datasheet.children[nb_operations - i - 1].children[1].innerHTML = operations[i].label;
                 datasheet.children[nb_operations - i - 1].children[2].innerHTML = (operations[i].amount > 0 ? "+" : "") + operations[i].amount.toFixed(2) + " €";
-                datasheet.children[nb_operations - i - 1].children[3].innerHTML = operation_type_list[operations[i].category].title;
+                datasheet.children[nb_operations - i - 1].children[3].innerHTML = translate_category(operation_type_list[operations[i].category].title);
 
                 if (operations[i].regularity == 0) {
                     datasheet.children[nb_operations - i - 1].children[4].innerHTML = `<img src="/assets/images/trash.png" alt="delete" class="card-button" onclick="confirm_popup_delete_element(${operations[i].id_operation})">`;
@@ -228,11 +228,37 @@ function update_datasheet() {
             }
         }
         else {
-            new_popup("Error getting operations code #1", "error")
+            new_popup("Error getting operations", "error")
         }
     }
     xhr.send();
     document.getElementById("loading-gif").style.display = "none";
+}
+
+function fill_account_list() {
+    var xhr = new XMLHttpRequest();
+    xhr.open("GET", "/api/v1/accounts", true);
+    xhr.onload = () => {
+        if (Math.floor(xhr.status / 100) === 2) {
+            accounts = JSON.parse(xhr.responseText).data;
+            if (accounts.length == 0) {
+                new_popup(trans('operations.no_account'), "info");
+                document.getElementById("add-field").disabled = true;
+                return;
+            }
+
+            accounts.forEach(account => {
+                account_list.innerHTML += `<option value="${account.id_account}">${account.label}</option>`;
+                balance_view.innerHTML += `<option value="${account.id_account}">${account.label}</option>`;
+            });
+
+            update_datasheet();
+        }
+        else {
+            new_popup("Error getting accounts", "error")
+        }
+    };
+    xhr.send();
 }
 
 function creating_operation_pannel() {
@@ -260,7 +286,7 @@ function create_operation() {
     category = document.getElementById("category").value;
 
     if (amount == "" || label == "" || operation_date.value == "") {
-        new_popup("Please fill all the fields", "warn")
+        new_popup(trans('operations.fill_fields'), "warn")
     }
     else {
         document.getElementById("loading-gif").style.display = "flex";
@@ -273,10 +299,10 @@ function create_operation() {
                 document.getElementById("label").value = "";
                 document.getElementById("amount").value = "";
                 selected_account.type == 0 ? document.getElementById("category").value = 1 : document.getElementById("category").value = 7;
-                new_popup("Operation created", "success");
+                new_popup(trans('operations.create_success'), "success");
             }
             else {
-                new_popup("Unknow error creating operations", "error");
+                new_popup(trans('operations.create_error'), "error");
             }
         };
         xhr.send(JSON.stringify({ id_account: account_list.value, label, amount, category, date: operation_date.value }));

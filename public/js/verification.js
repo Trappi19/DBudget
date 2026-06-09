@@ -56,7 +56,7 @@ function fill_account_lists() {
             accounts = JSON.parse(xhr.responseText).data;
 
             if (accounts.length == 0) {
-                new_popup("There is no account yet", "info");
+                new_popup(trans('verification.no_account'), "info");
                 document.getElementsByClassName("analytics-form")[0].disabled = true;
             }
             else {
@@ -92,18 +92,18 @@ function update_datasheet() {
         for ($i = 0; $i < 14; $i++) {
             tmp_html += `
             <li class="table-row">
-                <div class="col col-1" data-label="Date"> --- </div>
-                <div class="col col-2" data-label="Label"> --- </div>
-                <div class="col col-3" data-label="Amount"> --- </div>
-                <div class="col col-4" data-label="Category"> --- </div>
-                <div class="col col-5" data-label="Actions"></div>
+                <div class="col col-1" data-label="${trans('table.date')}"> --- </div>
+                <div class="col col-2" data-label="${trans('table.label')}"> --- </div>
+                <div class="col col-3" data-label="${trans('table.amount')}"> --- </div>
+                <div class="col col-4" data-label="${trans('table.category')}"> --- </div>
+                <div class="col col-5" data-label="${trans('table.actions')}"></div>
             </li>`;
         }
         datasheet.innerHTML = tmp_html;
         selected_month.disabled = true;
         additional_operation.disabled = true;
 
-        new_popup("Please select an account", "warn");
+        new_popup(trans('verification.select_account'), "warn");
         return;
     }
     else {
@@ -126,7 +126,7 @@ function update_datasheet() {
                 nb_operations = operations.length;
 
                 if (nb_operations == 0) {
-                    new_popup("There is no operation at this date", "info");
+                    new_popup(trans('verification.no_operations'), "info");
                     return;
                 }
 
@@ -136,11 +136,11 @@ function update_datasheet() {
 
                     datasheet.innerHTML += `
                     <li class="table-row" id_operation="${operations[i].id_operation}">
-                        <div class="col col-1" data-label="Date"> ${new Date(operations[i].date).toLocaleDateString("fr-FR")} </div>
-                        <div class="col col-2" data-label="Label"> ${operations[i].label} </div>
-                        <div class="col col-3" data-label="Amount"> ${(operations[i].amount > 0 ? "+" : "") + operations[i].amount.toFixed(2)} € </div>
-                        <div class="col col-4" data-label="Category"> ${category_title} </div>
-                        <div class="col col-5" data-label="Actions">
+                        <div class="col col-1" data-label="${trans('table.date')}"> ${formatDate(operations[i].date)} </div>
+                        <div class="col col-2" data-label="${trans('table.label')}"> ${operations[i].label} </div>
+                        <div class="col col-3" data-label="${trans('table.amount')}"> ${(operations[i].amount > 0 ? "+" : "") + operations[i].amount.toFixed(2)} € </div>
+                        <div class="col col-4" data-label="${trans('table.category')}"> ${translate_category(category_title)} </div>
+                        <div class="col col-5" data-label="${trans('table.actions')}">
                             <img src="/assets/images/trash.png" alt="delete" class="card-button"">
                         </div>
                     </li>`;
@@ -165,7 +165,7 @@ function update_datasheet() {
                 }, this);
             }
             else {
-                new_popup("Error getting operations code #1", "error")
+                new_popup("Error getting operations", "error")
             }
         }
         xhr.send();
@@ -205,7 +205,7 @@ function confirm_popup_delete() {
 function confirm_delete() {
     let selected = Array.from(datasheet.getElementsByClassName("to-delete"));
     if (selected.length == 0) {
-        new_popup("No operation selected", "warn");
+        new_popup(trans('verification.no_selection'), "warn");
         return;
     }
     selected.forEach(element => {
@@ -217,10 +217,10 @@ function confirm_delete() {
                 element.remove();
                 operations = operations.filter(operation => operation.id_operation != element.getAttribute("id_operation"));
                 update_brief();
-                new_popup("Operation deleted", "success");
+                new_popup(trans('verification.delete_success'), "success");
             }
             else {
-                new_popup("Error deleting operation", "error");
+                new_popup(trans('verification.delete_error'), "error");
             }
         }
         xhr.send(JSON.stringify({ id: element.getAttribute("id_operation") }));

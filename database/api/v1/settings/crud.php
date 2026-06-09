@@ -15,6 +15,13 @@ if ($username === false) {
 
 $user = new User($_SESSION['email']);
 $user->setUsername($username);
+
+if (isset($body['lang'])) {
+    $lang = sanitize_string($body['lang'], 50);
+    $user->setLang($lang);
+    $_SESSION['lang'] = $user->getLang();
+}
+
 $user->update();
 
 $_SESSION['username'] = $username;
