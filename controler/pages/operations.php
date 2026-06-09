@@ -1,9 +1,13 @@
 <?php
 
 require_once $_SERVER['DOCUMENT_ROOT'] . '/controler/helpers/auth.php';
+require_once $_SERVER['DOCUMENT_ROOT'] . '/database/tables/account.php';
+require_once $_SERVER['DOCUMENT_ROOT'] . '/database/tables/operation_type.php';
 
 requireLogin();
 
+$accounts = Account::getAccountsByUser($_SESSION['email']);
+$operation_types = OperationType::getAll();
 
 $title = "Operations";
 $page_name = "Operations";

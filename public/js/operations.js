@@ -14,9 +14,8 @@ let selected_account;
 let operation_type_list = [];
 
 onload = () => {
-    set_operation_type_list();
-    fill_account_list();
-    add_notes();
+    date_to_search.valueAsDate = new Date();
+    operation_date.valueAsDate = new Date();
 
     account_list.addEventListener("change", sync_account_selection);
     account_list.addEventListener("change", creating_operation_pannel);
@@ -30,8 +29,8 @@ onload = () => {
     balance_view.addEventListener("change", update_datasheet);
     date_to_search.addEventListener("change", update_datasheet);
 
-    date_to_search.valueAsDate = new Date();
-    operation_date.valueAsDate = new Date();
+    load_preloaded_data();
+    add_notes();
 }
 
 function sync_account_selection() {
@@ -77,21 +76,17 @@ function add_notes() {
     }
 }
 
-function set_operation_type_list() {
-    let xhr = new XMLHttpRequest();
-    xhr.open("GET", "/api/v1/operations/types", false);
-    xhr.onload = () => {
-        if (Math.floor(xhr.status / 100) === 2) {
-            operation_type_list = JSON.parse(xhr.responseText).data;
-            operation_type_list.forEach(t => {
-                filter_type.innerHTML += `<option value="${t.id}">${t.title}</option>`;
-            });
-        }
-        else {
-            new_popup("Error getting operation type list", "error");
-        }
-    };
-    xhr.send();
+function load_preloaded_data() {
+    operation_type_list = window.OPERATION_TYPES || [];
+    accounts = window.ACCOUNTS || [];
+
+    if (accounts.length == 0) {
+        new_popup("There is no account yet", "info");
+        document.getElementById("add-field").disabled = true;
+        return;
+    }
+
+    update_datasheet();
 }
 
 function set_select_category() {
@@ -221,32 +216,6 @@ function update_datasheet() {
     }
     xhr.send();
     document.getElementById("loading-gif").style.display = "none";
-}
-
-function fill_account_list() {
-    var xhr = new XMLHttpRequest();
-    xhr.open("GET", "/api/v1/accounts", true);
-    xhr.onload = () => {
-        if (Math.floor(xhr.status / 100) === 2) {
-            accounts = JSON.parse(xhr.responseText).data;
-            if (accounts.length == 0) {
-                new_popup("There is no account yet", "info");
-                document.getElementById("add-field").disabled = true;
-                return;
-            }
-
-            accounts.forEach(account => {
-                account_list.innerHTML += `<option value="${account.id_account}">${account.label}</option>`;
-                balance_view.innerHTML += `<option value="${account.id_account}">${account.label}</option>`;
-            });
-
-            update_datasheet();
-        }
-        else {
-            new_popup("Error getting accounts code #2", "error")
-        }
-    };
-    xhr.send();
 }
 
 function creating_operation_pannel() {

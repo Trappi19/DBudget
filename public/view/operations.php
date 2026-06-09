@@ -12,6 +12,9 @@
             <div id="filter-dropdown">
                 <select name="balance-view" id="balance-view">
                     <option value="0">Tous les comptes</option>
+                    <?php foreach ($accounts as $account): ?>
+                        <option value="<?= (int) $account['id_account'] ?>"><?= htmlspecialchars($account['label']) ?></option>
+                    <?php endforeach; ?>
                 </select>
                 <select name="filter-type" id="filter-type">
                     <option value="">Tous les types</option>
@@ -58,6 +61,9 @@
                 <p>Selects the account on which to add an operation</p>
                 <select name="selected-account" id="selected-account">
                     <option value="0"> Select an account </option>
+                    <?php foreach ($accounts as $account): ?>
+                        <option value="<?= (int) $account['id_account'] ?>"><?= htmlspecialchars($account['label']) ?></option>
+                    <?php endforeach; ?>
                 </select>
             </div>
 
@@ -102,4 +108,3 @@
 </script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="/public/js/operations.js" type="text/javascript"></script>
-
