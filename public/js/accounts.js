@@ -10,6 +10,15 @@ let transfer_data = [null, null];
 
 function f_onload() { onload(); }
 
+function account_icon(account) {
+    if (account.icon) {
+        return `<span class="account-icon account-icon--image"><img src="${account.icon}" alt="icon"></span>`;
+    }
+
+    let type_class = account.type ? "account-icon--savings" : "account-icon--checking";
+    return `<span class="account-icon ${type_class}"></span>`;
+}
+
 // Reposition selected cards on resize/zoom
 window.addEventListener('resize', reposition_transfer_cards);
 
@@ -47,7 +56,7 @@ onload = () => {
             accounts.forEach(account => {
                 datasheet.innerHTML += `
                     <li id="card-${account.id_account}" onclick="manage_account_transfer(${account.id_account})" class="table-row">
-                        <div class="col col-1" data-label="Label">${account.label}</div>
+                        <div class="col col-1" data-label="Label">${account_icon(account)}<span class="account-label">${account.label}</span></div>
                         <div class="col col-2" data-label="Sold">${account.sold.toFixed(2)} € </div>
                         <div class="col col-3" data-label="Type">${account.type ? "Savings account" : "Checking account"}</div>
 
@@ -160,8 +169,8 @@ function process_transfer() {
 }
 
 function get_account_shortname() {
-    let from_shortname = document.getElementById("card-" + transfer_data[0]).children[0].innerHTML;
-    let to_shortname = document.getElementById("card-" + transfer_data[1]).children[0].innerHTML;
+    let from_shortname = document.getElementById("card-" + transfer_data[0]).querySelector(".account-label").innerHTML;
+    let to_shortname = document.getElementById("card-" + transfer_data[1]).querySelector(".account-label").innerHTML;
 
     if (from_shortname.includes(" ")) { // get first letter of each word OR get first 3 letters
         from_shortname = from_shortname
@@ -246,7 +255,7 @@ function edit_element(event, id, element) {
 
     card.onclick = "";
     card.innerHTML = `
-        <input class="col col-1" data-label="Label" value="${card.children[0].innerHTML}" />
+        <input class="col col-1" data-label="Label" value="${card.querySelector(".account-label").innerHTML}" />
         <input class="col col-2" data-label="Sold" type="number" value="${card.children[1].innerHTML.slice(0, -3)}" />
         <select class="col col-3" data-label="Type">
             <option value="0">Checking account</option>

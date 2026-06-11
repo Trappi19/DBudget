@@ -64,7 +64,7 @@ class Account
     {
         return $this->user_email;
     }
-    public function getProfilePicture()
+    public function getIcon()
     {
         return $this->icon;
     }
@@ -81,7 +81,7 @@ class Account
     {
         $this->user_email = $user_email;
     }
-    public function setProfilePicture($icon)
+    public function setIcon($icon)
     {
         $this->icon = $icon;
     }

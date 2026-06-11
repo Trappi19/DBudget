@@ -26,7 +26,7 @@ if ($method === 'GET') {
         sendAPIResponse(200, 'OK', $result);
     } else {
 
-        $query = $db->prepare('SELECT id_account, label, type FROM bank_account WHERE user_email = :email ORDER BY type ASC');
+        $query = $db->prepare('SELECT id_account, label, type, icon FROM bank_account WHERE user_email = :email ORDER BY type ASC');
         $query->execute(['email' => $_SESSION['email']]);
         $result = $query->fetchAll(PDO::FETCH_ASSOC);
 

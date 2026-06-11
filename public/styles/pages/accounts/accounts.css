@@ -45,11 +45,6 @@
   margin: 10px 0;
 }
 
-.responsive-table .table-row[style*="transform"] {
-  position: relative;
-  z-index: 10;
-}
-
 #create-account-field {
   display: none;
   background-color: #f5f5f5;
@@ -67,8 +62,56 @@
   left: auto;
 }
 
+.responsive-table .table-row[style*=transform] {
+  position: relative;
+  z-index: 10;
+}
 .responsive-table .col-1 {
   flex-basis: 35%;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.responsive-table .account-icon {
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+  min-width: 32px;
+  min-height: 32px;
+  aspect-ratio: 1;
+  border-radius: 8px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.responsive-table .account-icon::before {
+  content: "";
+  width: 70%;
+  height: 70%;
+  background-color: #6b6b6b;
+  -webkit-mask: url("/assets/images/liste.png") no-repeat center / contain;
+  mask: url("/assets/images/liste.png") no-repeat center / contain;
+}
+.responsive-table .account-icon--checking {
+  background-color: #e6f1fb;
+}
+.responsive-table .account-icon--checking::before {
+  background-color: #1a73e8;
+}
+.responsive-table .account-icon--savings {
+  background-color: #e6f4ea;
+}
+.responsive-table .account-icon--savings::before {
+  background-color: #34a853;
+}
+.responsive-table .account-icon--image::before {
+  content: none;
+}
+.responsive-table .account-icon img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 .responsive-table .col-2 {
   flex-basis: 25%;
@@ -89,5 +132,20 @@
   }
   .back-table-row {
     height: 5px !important;
+  }
+  .responsive-table li {
+    height: auto;
+    padding-top: 8px;
+    padding-bottom: 8px;
+  }
+  .responsive-table .account-icon {
+    width: 24px;
+    height: 24px;
+    min-width: 24px;
+    min-height: 24px;
+  }
+  .responsive-table .col-1 {
+    align-items: center;
+    padding-left: 6px;
   }
 }
