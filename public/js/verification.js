@@ -131,12 +131,15 @@ function update_datasheet() {
                 }
 
                 for (let i = 0; i < nb_operations; i++) {
+                    let operation_type = operation_type_list.find(type => type.id == operations[i].category);
+                    let category_title = operation_type ? operation_type.title : "Inconnu";
+
                     datasheet.innerHTML += `
                     <li class="table-row" id_operation="${operations[i].id_operation}">
                         <div class="col col-1" data-label="Date"> ${new Date(operations[i].date).toLocaleDateString("fr-FR")} </div>
                         <div class="col col-2" data-label="Label"> ${operations[i].label} </div>
                         <div class="col col-3" data-label="Amount"> ${(operations[i].amount > 0 ? "+" : "") + operations[i].amount.toFixed(2)} € </div>
-                        <div class="col col-4" data-label="Category"> ${operation_type_list[operations[i].category].title} </div>
+                        <div class="col col-4" data-label="Category"> ${category_title} </div>
                         <div class="col col-5" data-label="Actions">
                             <img src="/assets/images/trash.png" alt="delete" class="card-button"">
                         </div>
