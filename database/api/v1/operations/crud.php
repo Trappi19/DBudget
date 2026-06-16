@@ -52,9 +52,11 @@ if ($method === 'GET') {
     }
 
     if (isset($_GET['label']) && $_GET['label'] !== '') {
-        $label_filter = '%' . sanitize_string($_GET['label']) . '%';
-        $where .= ' AND label LIKE ?';
-        $params[] = $label_filter;
+        $searchTerm = '%' . sanitize_string($_GET['label']) . '%';
+
+        $where .= ' AND (label LIKE ? OR amount LIKE ?)';
+        $params[] = $searchTerm;
+        $params[] = $searchTerm;
     }
 
     if (isset($_GET['category'])) {
