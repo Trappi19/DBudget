@@ -94,8 +94,6 @@
     </section>
 </section>
 
-<br>
-<br>
 
 <script>
     window.ACCOUNTS = <?= json_encode($accounts, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT) ?>;

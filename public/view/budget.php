@@ -101,8 +101,6 @@
 
 </section>
 
-<br>
-<br>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js@^4"></script>
 <script src="https://cdn.jsdelivr.net/npm/moment@^2"></script>
