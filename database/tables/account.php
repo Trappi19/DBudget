@@ -116,9 +116,9 @@ class Account
     {
         global $db;
 
-        $query = $db->prepare('SELECT * FROM bank_account WHERE user_email = :user_email');
+        $query = $db->prepare('SELECT * FROM bank_account WHERE user_email = :user_email ORDER BY type ASC, label ASC');
         $query->execute(['user_email' => $email]);
-        $result = $query->fetchAll();
+        $result = $query->fetchAll(PDO::FETCH_ASSOC);
 
         return $result;
     }

@@ -26,9 +26,7 @@ if ($method === 'GET') {
         sendAPIResponse(200, 'OK', $result);
     } else {
 
-        $query = $db->prepare('SELECT id_account, label, type, icon FROM bank_account WHERE user_email = :email ORDER BY type ASC, label ASC');
-        $query->execute(['email' => $_SESSION['email']]);
-        $result = $query->fetchAll(PDO::FETCH_ASSOC);
+        $result = Account::getAccountsByUser($_SESSION['email']);
 
         foreach ($result as $key => $value) {
             $result[$key]['sold'] = Operation::getLastOperationSoldByAccount($value['id_account'], date('Y-m-d'));
