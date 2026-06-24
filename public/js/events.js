@@ -197,6 +197,9 @@ function create_event() {
     if (label == "" || amount == "" || category == "" || start == "" || end == "" || frequency == "" || account == 0) {
         new_popup(trans('events.fill_fields'), "warn");
     }
+    else if (new Date(start) > new Date(end)) {
+        new_popup(trans('events.start_after_end'), "warn");
+    }
     else {
         var xhr = new XMLHttpRequest();
         xhr.open("POST", "/api/v1/events", true);
@@ -298,6 +301,9 @@ function confirm_edit_element(label, amount, start, end, frequency, category, id
 
     if (label == "" || amount == "" || start == "" || end == "" || frequency == "" || category == "") {
         new_popup(trans('events.fill_fields'), "warn");
+    }
+    else if (new Date(start) > new Date(end)) {
+        new_popup(trans('events.start_after_end'), "warn");
     }
     else {
         element.parentNode.innerHTML = `<img src="/assets/images/load.gif" alt="load" class="card-button">`;

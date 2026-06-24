@@ -107,6 +107,7 @@
         "no_event": "Aucun événement récurrent à cette date",
         "no_account": "Aucun compte trouvé",
         "fill_fields": "Veuillez remplir tous les champs",
+        "start_after_end": "Incohérence des dates",
         "delete_success": "Événement supprimé",
         "delete_error": "Erreur lors de la suppression",
         "create_success": "Événement créé",

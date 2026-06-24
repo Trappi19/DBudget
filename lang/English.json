@@ -107,6 +107,7 @@
         "no_event": "No regular event in this time",
         "no_account": "There is no account yet",
         "fill_fields": "Please fill all the fields",
+        "start_after_end": "Date inconsistency",
         "delete_success": "Event deleted",
         "delete_error": "Error deleting event",
         "create_success": "Event created",
