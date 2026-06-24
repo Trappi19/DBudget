@@ -111,19 +111,16 @@ function transfer_animation_on(id, postion, animate = true) {
     card.style.width = "";
     card.offsetWidth; // force reflow
 
-    let start_width = card.getBoundingClientRect().width;
-    let slot_position = slot.getBoundingClientRect();
-    let target_width = slot_position.width;
-
-    card.style.width = start_width + "px";
-    card.offsetWidth;
-
     let card_position = card.getBoundingClientRect();
+    let slot_position = slot.getBoundingClientRect();
+
     let x = slot_position.x - card_position.x;
     let y = slot_position.y - card_position.y;
+    let cs = getComputedStyle(card);
+    let padding = parseFloat(cs.paddingLeft) + parseFloat(cs.paddingRight);
 
     card.style.transition = animate ? "" : "none";
-    card.style.width = target_width + "px";
+    card.style.width = (slot_position.width - padding) + "px";
     card.style.transform = `translate(${x}px, ${y}px)`;
 
     if (!animate) {
@@ -145,15 +142,8 @@ function reposition_transfer_cards() {
 // Reset card to its original position
 function transfer_animation_off(id) {
     let card = document.getElementById("card-" + id);
-
-    let full_width = card.parentElement.getBoundingClientRect().width;
     card.style.transform = "";
-    card.style.width = full_width + "px";
-
-    card.addEventListener("transitionend", function clear_width() {
-        card.style.width = "";
-        card.removeEventListener("transitionend", clear_width);
-    });
+    card.style.width = "";
 }
 
 function process_transfer() {
