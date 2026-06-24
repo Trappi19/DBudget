@@ -14,8 +14,8 @@ function confirm_popup(title, message, onConfirm, onCancel = null) {
             <p id="confirm-popup-title">${escapeHTML(title)}</p>
             <p id="confirm-popup-message">${message}</p>
             <div id="confirm-popup-buttons">
-                <button id="confirm-popup-cancel" class="valide_button noselect">Annuler</button>
                 <button id="confirm-popup-confirm" class="valide_button noselect">Confirmer</button>
+                <button id="confirm-popup-cancel" class="valide_button noselect">Annuler</button>
             </div>
         </div>
     `;
