@@ -25,7 +25,7 @@
             <input type="checkbox" id="opt-theme">
         </div>
 
-        <button class="valide_button" onclick="saveSettings()"><?= trans('settings.save') ?></button>
+        <button class="valide_button valide_button--save_settings" onclick="saveSettings()"><?= trans('settings.save') ?></button>
     </div>
 </section>
 

@@ -76,6 +76,12 @@ input::-webkit-inner-spin-button {
   }
 }
 
+/* Variant for the native <button> (settings): drop the user-agent border/background */
+.valide_button--save_settings {
+  border: none;
+  background-color: transparent;
+}
+
 /* Variant used inside cards (settings): right-aligned, light gray, thin border */
 .valide_button--card {
   align-self: flex-end;
