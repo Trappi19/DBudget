@@ -11,7 +11,7 @@
 	<meta name="theme-color" content="#424549" />
 
 	<script>window.APP_LANG = <?= get_lang_json() ?>;</script>
-	<script src="/public/js/utils.js" type="text/javascript"></script>
+	<script src="/public/js/components/utils.js" type="text/javascript"></script>
 	<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 	<link rel="stylesheet" href="/public/styles/generics/generics.css">
 	<link rel="stylesheet" href="/public/styles/layout/header.css">

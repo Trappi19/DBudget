@@ -103,4 +103,4 @@
     window.OPERATION_TYPES = <?= json_encode($operation_types, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT) ?>;
 </script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script src="/public/js/operations.js" type="text/javascript"></script>
+<script src="/public/js/pages/operations.js" type="text/javascript"></script>

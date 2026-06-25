@@ -1,6 +1,6 @@
 <footer>
-    <script src="/public/js/confirm_popup.js" type="text/javascript"></script>
-    <script src="/public/js/popup.js" type="text/javascript"></script>
+    <script src="/public/js/components/confirm_popup.js" type="text/javascript"></script>
+    <script src="/public/js/components/toast.js" type="text/javascript"></script>
     <link rel="stylesheet" href="/public/styles/components/popup/confirm-popup.css">
     <link rel="stylesheet" href="/public/styles/components/popup/toast.css">
 

@@ -29,4 +29,4 @@
     </div>
 </section>
 
-<script src="/public/js/settings.js" type="text/javascript"></script>
+<script src="/public/js/pages/settings.js" type="text/javascript"></script>

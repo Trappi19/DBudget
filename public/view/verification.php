@@ -58,5 +58,5 @@
 <br>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script src="/public/js/verification.js" type="text/javascript"></script>
+<script src="/public/js/pages/verification.js" type="text/javascript"></script>
 

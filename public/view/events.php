@@ -78,5 +78,5 @@
 
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script src="/public/js/events.js" type="text/javascript"></script>
+<script src="/public/js/pages/events.js" type="text/javascript"></script>
 

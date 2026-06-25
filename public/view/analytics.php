@@ -48,5 +48,5 @@
 <script src="https://cdn.jsdelivr.net/npm/moment@^2"></script>
 <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-moment@^1"></script>
 
-<script src="/public/js/analytics.js" type="text/javascript"></script>
+<script src="/public/js/pages/analytics.js" type="text/javascript"></script>
 
