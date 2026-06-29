@@ -13,9 +13,9 @@
         <div class="settings-group">
             <label for="opt-langue"><?= trans('settings.language') ?></label>
             <select id="opt-langue">
-                <?php foreach ($languages as $lang): ?>
-                    <option value="<?= htmlspecialchars($lang['code']) ?>"<?= $lang['code'] === $current_lang ? ' selected' : '' ?>>
-                        <?= htmlspecialchars($lang['label']) ?>
+                <?php foreach ($languages as $lang_code): ?>
+                    <option value="<?= htmlspecialchars($lang_code) ?>"<?= $lang_code === $current_lang ? ' selected' : '' ?>>
+                        <?= htmlspecialchars($lang_code) ?>
                     </option>
                 <?php endforeach; ?>
             </select>

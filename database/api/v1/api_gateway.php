@@ -2,10 +2,22 @@
 
 require_once($_SERVER['DOCUMENT_ROOT'] . '/database/api/v1/apiUtils.php');
 require_once($_SERVER['DOCUMENT_ROOT'] . '/controler/helpers/auth.php');
-requireLoginApi();
 
 $uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 $uri = rtrim($uri, '/') ?: '/';
+
+// public route (account creation) or private route (requires login)
+$publicRoutes = [
+    '/api/v1/userAccount/ask_validation',
+    '/api/v1/userAccount/validation',
+    '/api/v1/lang',
+];
+
+if (in_array($uri, $publicRoutes, true)) {
+    if (session_status() !== PHP_SESSION_ACTIVE) session_start();
+} else {
+    requireLoginApi();
+}
 
 header('Content-Type: application/json');
 
@@ -23,9 +35,13 @@ if (in_array($method, ['POST', 'PATCH', 'DELETE', 'PUT'])) {
 }
 
 $apiRoutes = [
-    '/api/v1/accounts'              => 'database/api/v1/accounts/crud.php',
-    '/api/v1/accounts/operations'   => 'database/api/v1/accounts/operations.php',
-    '/api/v1/accounts/balance'      => 'database/api/v1/accounts/balance.php',
+    '/api/v1/userAccount/ask_validation' => 'database/api/v1/userAccount/ask_validation.php',
+    '/api/v1/userAccount/validation'     => 'database/api/v1/userAccount/validation.php',
+    '/api/v1/lang'                       => 'database/api/v1/lang/set.php',
+
+    '/api/v1/accounts'               => 'database/api/v1/accounts/crud.php',
+    '/api/v1/accounts/operations'    => 'database/api/v1/accounts/operations.php',
+    '/api/v1/accounts/balance'       => 'database/api/v1/accounts/balance.php',
 
     '/api/v1/operations'            => 'database/api/v1/operations/crud.php',
     '/api/v1/operations/types'      => 'database/api/v1/operations/types.php',

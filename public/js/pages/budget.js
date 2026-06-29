@@ -226,7 +226,7 @@ function update_charts() {
 }
 
 function add_additional_operations() {
-    // Faire une deep copy de global_operations
+    // Make a deep copy of global_operations
     let operations = JSON.parse(JSON.stringify(global_operations));
 
     expected_savings = parseInt(account_expected_savings.value == "" ? 0 : account_expected_savings.value);

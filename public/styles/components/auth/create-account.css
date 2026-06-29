@@ -1,0 +1,202 @@
+/* ==========================================================================
+   create-account.css — Registration screen variant.
+   Layered on top of auth.css (shared login/registration base). Adds the
+   multi-step layout, the language <select>, the larger verification-code
+   field, and the toggleable inline error messages.
+   ========================================================================== */
+
+/* Each step slides in from the right as it becomes the active one. */
+@keyframes auth-step-in {
+  from {
+    opacity: 0;
+    transform: translateX(25px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Going back reverses the motion: the step slides in from the left. */
+@keyframes auth-step-in-back {
+  from {
+    opacity: 0;
+    transform: translateX(-25px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+#section-core {
+  /* The registration card grows with its content instead of the fixed login height. */
+  .form-box--register {
+    height: auto;
+    min-height: 450px;
+    padding: 30px 0;
+
+    /* Pin the content to the input width so every step shares the same column
+       and stays centered. Without this, a long step (e.g. the verification
+       intro text) widens the form and the fixed-width fields drift left. */
+    .form-value {
+      width: 310px;
+    }
+  }
+
+  /* Only the active step is shown; the others are kept in the DOM. */
+  .auth-step {
+    display: none;
+
+    /* Toggling display none → block restarts the animation, so every step
+       change replays the slide-in. */
+    &.auth-step--active {
+      display: block;
+      animation: auth-step-in 0.4s ease both;
+
+      /* Set by the back arrow so the step slides in from the opposite side. */
+      &.auth-step--back {
+        animation-name: auth-step-in-back;
+      }
+    }
+  }
+
+  /* White round back arrow pinned to the top-left of the register card. */
+  .auth-back {
+    position: absolute;
+    top: 18px;
+    left: 18px;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    padding: 0;
+    border: none;
+    border-radius: 50%;
+    background: transparent;
+    color: #fff;
+    cursor: pointer;
+    transition: background 0.2s ease, transform 0.2s ease;
+
+    .material-icons {
+      font-size: 1.6em;
+    }
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.15);
+      transform: translateX(-2px);
+    }
+
+    /* Overrides the display:flex above when the step has no previous step. */
+    &[hidden] {
+      display: none;
+    }
+  }
+
+  .auth-info {
+    margin: 10px 0 25px;
+    color: #fff;
+    font-size: 0.95em;
+    line-height: 1.6;
+    text-align: center;
+  }
+
+  /* Language picker reuses the underlined input-box look. */
+  .input-box--select select {
+    width: 100%;
+    height: 50px;
+    padding: 0 35px 0 5px;
+    border: none;
+    border-radius: 0;
+    outline: none;
+    box-shadow: none;
+    background: transparent;
+    color: #fff;
+    font-size: 1em;
+    cursor: pointer;
+    appearance: none;
+
+    option {
+      color: #333;
+    }
+  }
+
+  /* Verification code field — deliberately larger than a regular input. */
+  .input-box--code {
+    input {
+      display: block;        /* drop the inline baseline gap so the underline hugs the field */
+      height: 64px;
+      padding: 0;            /* no icon here: symmetric padding keeps the text truly centered */
+      font-size: 1.6em;
+      letter-spacing: 8px;
+      text-align: center;
+    }
+
+    label {
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+
+    :is(input:focus, input:not(:placeholder-shown)) ~ label {
+      left: 5px;
+      transform: translateY(-50%);
+    }
+  }
+
+  /* Inline errors are hidden until a handler reveals them. */
+  .auth-step .error {
+    display: none;
+
+    &.error--visible {
+      display: block;
+    }
+  }
+}
+
+/* Honour users who ask the OS to minimize motion: steps appear instantly. */
+@media (prefers-reduced-motion: reduce) {
+  #section-core .auth-step--active,
+  #section-core .auth-step--active.auth-step--back {
+    animation: none;
+  }
+}
+
+/* Narrow screens (phones): the fixed 400px card and 310px columns would
+   overflow, so make the whole registration flow fluid and edge-safe. */
+@media all and (max-width: 480px) {
+  #section-core {
+    margin-left: 0;
+
+    .form-box--register {
+      width: 85vw;
+      max-width: 360px;
+      /* Horizontal padding on the card gives the fluid columns their gutters. */
+      padding: 26px 22px;
+
+      .form-value {
+        width: 100%;
+      }
+    }
+
+    /* Every field tracks the card width instead of its fixed 310px. */
+    .input-box {
+      width: 100%;
+    }
+
+    /* Keep the back arrow clear of the rounded corner on small cards. */
+    .auth-back {
+      top: 14px;
+      left: 14px;
+    }
+
+    /* The code field is wide; tighten it so 8 chars never overflow. */
+    .input-box--code input {
+      font-size: 1.4em;
+      letter-spacing: 5px;
+    }
+  }
+}

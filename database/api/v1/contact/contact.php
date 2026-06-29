@@ -50,7 +50,7 @@ $textBody = buildContactMailText($username, $userEmail, $level, $message, $sentA
 
 try {
     $mailer = new Mailer('smtp.gmail.com', 587, $mailSender, $mailPassword);
-    $mailer->send($mailSender, 'DBuget Contact', $mailContact, $emailSubject, $htmlBody, $textBody);
+    $mailer->send('DBuget Contact', $mailContact, $emailSubject, $htmlBody, $textBody);
 } catch (RuntimeException $e) {
     error_log('[Contact] SMTP error: ' . $e->getMessage());
     sendAPIResponse(500, 'Mail delivery failed', []);
@@ -61,7 +61,7 @@ try {
     $confirmSubject = $headerSafe(trans('settings.contact_form.confirmation.subject'));
     $confirmHtml = buildConfirmationMailHtml($username, $theme, $subject, $message, $sentAt);
     $confirmText = buildConfirmationMailText($username, $theme, $subject, $message, $sentAt);
-    $mailer->send($mailSender, 'DBuget', $userEmail, $confirmSubject, $confirmHtml, $confirmText);
+    $mailer->send('DBuget', $userEmail, $confirmSubject, $confirmHtml, $confirmText);
 } catch (RuntimeException $e) {
     error_log('[Contact] Confirmation mail failed: ' . $e->getMessage());
 }

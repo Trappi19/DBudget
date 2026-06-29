@@ -18,8 +18,9 @@ $pageRoutes = [
     '/app/budget'       => 'controler/pages/budget.php',
     '/app/analytics'    => 'controler/pages/analytics.php',
     '/app/settings'     => 'controler/pages/settings.php',
-    '/app/login'        => 'controler/login/login.php',
-    '/app/logout'       => 'controler/login/logout.php',
+    '/app/login'          => 'controler/login/login.php',
+    '/app/create-account' => 'controler/login/create_account.php',
+    '/app/logout'         => 'controler/login/logout.php',
 ];
 
 if (isset($pageRoutes[$uri])) {

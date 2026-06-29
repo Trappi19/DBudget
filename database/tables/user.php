@@ -95,6 +95,33 @@ class User
         $this->lang = in_array($lang, $allowed) ? $lang : 'English';
     }
 
+    public static function exists($email): bool
+    {
+        global $db;
+
+        $query = $db->prepare('SELECT 1 FROM user WHERE email = :email');
+        $query->execute(['email' => $email]);
+        return $query->fetch() !== false;
+    }
+
+    public static function register($email, $username, $passwordHash, $salt, $lang): void
+    {
+        global $db;
+
+        $query = $db->prepare(
+            'INSERT INTO user (email, username, password, salt, lang)
+             VALUES (:email, :username, :password, :salt, :lang)'
+        );
+
+        $query->execute([
+            'email'    => $email,
+            'username' => $username,
+            'password' => $passwordHash,
+            'salt'     => $salt,
+            'lang'     => $lang,
+        ]);
+    }
+
     public static function createPassword($rawPassword)
     {
         $salt = bin2hex(random_bytes(16));

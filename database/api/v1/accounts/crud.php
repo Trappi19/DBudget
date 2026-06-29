@@ -8,7 +8,7 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/database/api/v1/apiUtils.php');
 
 
 
-// GET /api/v1/accounts        -> liste
+// GET /api/v1/accounts        -> list
 // GET /api/v1/accounts?id=X   -> item
 if ($method === 'GET') {
     $id = $_GET['id'] ?? null;

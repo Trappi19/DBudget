@@ -210,5 +210,39 @@
         "other": "Autre",
         "withdrawal": "Retrait",
         "interest": "Intérêts"
+    },
+    "auth": {
+        "register": {
+            "title": "Créer un compte",
+            "language_intro": "Choisissez votre langue",
+            "continue": "Continuer",
+            "have_account": "Vous avez déjà un compte ?",
+            "login_here": "Connectez-vous ici",
+            "email": "Email",
+            "username": "Nom d'utilisateur",
+            "password": "Mot de passe",
+            "password_confirm": "Confirmer le mot de passe",
+            "create": "Créer le compte",
+            "verify_title": "Vérification",
+            "code_sent": "Vous avez reçu un code de vérification à l'adresse mail :",
+            "code_label": "Code de vérification",
+            "code_incorrect": "Code incorrect",
+            "validate": "Valider",
+            "back": "Revenir en arrière",
+            "fill_fields": "Veuillez remplir tous les champs.",
+            "invalid_email": "Veuillez entrer une adresse email valide.",
+            "password_mismatch": "Les mots de passe ne correspondent pas.",
+            "email_used": "Cette adresse mail est déjà utilisé",
+            "create_failed": "Le compte n'a pas pu être créé. Réessayez dans 1h.",
+            "network_error": "Erreur réseau.",
+            "verification_email": {
+                "subject": "[DBudget] Code de vérification",
+                "greeting": "Bonjour {username},",
+                "intro": "Votre code de vérification est :",
+                "validity": "Le code est valide 15 minutes.",
+                "signature": "Cordialement,",
+                "footer": "Ce mail est automatique, ne pas répondre."
+            }
+        }
     }
 }

@@ -21,11 +21,12 @@ class Mailer
     }
 
     /**
-     * Send a plain-text + HTML email.
+     * The From address is always the authenticated SMTP account ($this->username):
+     * Gmail rejects any other From, so it isn't a caller-supplied parameter.
      *
-     * @throws RuntimeException on SMTP error (preserves the previous contract).
+     * @throws RuntimeException on SMTP error.
      */
-    public function send(string $from, string $fromName, string $to, string $subject, string $htmlBody, string $textBody = ''): void
+    public function send(string $fromName, string $to, string $subject, string $htmlBody, string $textBody = ''): void
     {
         $mail = new PHPMailer(true);
 
@@ -41,11 +42,11 @@ class Mailer
             $mail->Timeout = 30;
             $mail->XMailer = 'DBudget';
 
-            $mail->setFrom($from, $fromName);
-            $mail->addReplyTo($from, $fromName);
+            $mail->setFrom($this->username, $fromName);
+            $mail->addReplyTo($this->username, $fromName);
             $mail->addAddress($to);
 
-            // Flag automated transactional mail (helps deliverability).
+            // Automatic transactional email
             $mail->addCustomHeader('Auto-Submitted', 'auto-generated');
 
             $mail->isHTML(true);

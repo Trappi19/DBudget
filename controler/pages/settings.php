@@ -12,7 +12,7 @@ $username = $_SESSION['username'] ?? '';
 $email = $_SESSION['email'] ?? '';
 $mail_contact = getenv('MAIL_CONTACT') ?: '';
 
-$languages = get_available_languages();
+$languages = get_available_language_codes();
 $current_lang = get_locale();
 
 

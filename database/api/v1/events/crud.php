@@ -40,7 +40,7 @@ if ($method === 'POST') {
     ['label' => $label, 'start' => $start, 'end' => $end, 'amount' => $amount, 'frequency' => $frequency, 'category' => $category, 'id_account' => $id_account] = checkRequiredArg($body, ['label', 'start', 'end', 'amount', 'frequency', 'category', 'id_account']);
 
     $start = sanitize_date($start ?? '');
-    $end   = sanitize_date($end ?? '');
+    $end = sanitize_date($end ?? '');
 
     RegularEvent::createRegularEvent($label, $start, $end, $amount, $frequency, $category, $id_account);
 
@@ -52,7 +52,7 @@ if ($method === 'PATCH') {
     ['id' => $id, 'label' => $label, 'amount' => $amount, 'start' => $start, 'end' => $end, 'frequency' => $frequency, 'category' => $category] = checkRequiredArg($body, ['id', 'label', 'amount', 'start', 'end', 'frequency', 'category']);
 
     $start = sanitize_date($start ?? '');
-    $end   = sanitize_date($end ?? '');
+    $end = sanitize_date($end ?? '');
 
     $event = new RegularEvent($id);
     $event->setLabel($label);
