@@ -1,10 +1,10 @@
 
-<link rel="stylesheet" href="/public/styles/components/auth.css">
+<link rel="stylesheet" href="/public/styles/components/auth/auth.css">
 
 <section id="section-core">
     <div class="form-box">
         <div class="form-value">
-            <form action="/app/login" method="get">
+            <form id="login-form" action="/app/login" method="get">
                 <h2>Login</h2>
                 <div class="input-box">
                     <ion-icon name="mail-outline"></ion-icon>
@@ -32,13 +32,14 @@
 
                 <input type="submit" value="Login">
                 <div class="register">
-                    <p>Don't have an account? <a href="#">Call me</a></p>
+                    <a class="register-link" href="/app/create-account">Don't have an account? <span>Create here</span></a>
                 </div>
             </form>
         </div>
     </div>
 </section>
 
+<script src="/public/js/components/auth_transition.js" type="text/javascript"></script>
 <script>
     let side_bar = document.getElementById('side-menu');
     side_bar.style.filter = 'saturate(15%) brightness(50%)';

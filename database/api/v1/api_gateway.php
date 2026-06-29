@@ -2,10 +2,22 @@
 
 require_once($_SERVER['DOCUMENT_ROOT'] . '/database/api/v1/apiUtils.php');
 require_once($_SERVER['DOCUMENT_ROOT'] . '/controler/helpers/auth.php');
-requireLoginApi();
 
 $uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 $uri = rtrim($uri, '/') ?: '/';
+
+// Account creation happens before the user is logged in, so these routes are
+// public. Every other API route still requires an authenticated session.
+$publicRoutes = [
+    '/api/v1/account/ask_validation',
+    '/api/v1/account/validation',
+];
+
+if (in_array($uri, $publicRoutes, true)) {
+    if (session_status() !== PHP_SESSION_ACTIVE) session_start();
+} else {
+    requireLoginApi();
+}
 
 header('Content-Type: application/json');
 
@@ -23,6 +35,9 @@ if (in_array($method, ['POST', 'PATCH', 'DELETE', 'PUT'])) {
 }
 
 $apiRoutes = [
+    '/api/v1/account/ask_validation' => 'database/api/v1/account/ask_validation.php',
+    '/api/v1/account/validation'     => 'database/api/v1/account/validation.php',
+
     '/api/v1/accounts'              => 'database/api/v1/accounts/crud.php',
     '/api/v1/accounts/operations'   => 'database/api/v1/accounts/operations.php',
     '/api/v1/accounts/balance'      => 'database/api/v1/accounts/balance.php',

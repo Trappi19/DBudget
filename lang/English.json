@@ -181,5 +181,30 @@
         "other": "Other",
         "withdrawal": "Withdrawal",
         "interest": "Interest"
+    },
+    "auth": {
+        "register": {
+            "title": "Create an account",
+            "language_intro": "Choose your language",
+            "continue": "Continue",
+            "have_account": "Already have an account?",
+            "login_here": "Log in here",
+            "email": "Email",
+            "username": "Username",
+            "password": "Password",
+            "password_confirm": "Confirm password",
+            "create": "Create account",
+            "verify_title": "Verification",
+            "code_sent": "A verification code was sent to the email address:",
+            "code_label": "Verification code",
+            "code_incorrect": "Incorrect code",
+            "validate": "Validate",
+            "back": "Go back",
+            "fill_fields": "Please fill all fields.",
+            "password_mismatch": "Passwords do not match.",
+            "email_used": "This email address is already in use",
+            "create_failed": "The account could not be created. Try again in 1h.",
+            "network_error": "Network error."
+        }
     }
 }

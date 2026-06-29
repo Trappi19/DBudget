@@ -5,16 +5,17 @@
    (.register-box, .input-check) which is not displayed yet.
    ========================================================================== */
 
-/* Neutralizes the yellow background of browser autofill */
+/* Keep autofilled fields visually identical to empty ones: white text and no
+   coloured box. The very long transition stops the browser from ever painting
+   its autofill background, so the field stays transparent like the others. */
 input:-webkit-autofill,
 input:-webkit-autofill:hover,
 input:-webkit-autofill:focus,
 input:-webkit-autofill:active {
   -webkit-text-fill-color: #ffffff;
-  -webkit-background-clip: text;
-  -webkit-transition: background-color 5000s ease-in-out 0s;
-  transition: background-color 5000s ease-in-out 0s;
-  box-shadow: inset 0 0 20px 20px rgba(35, 35, 35, 0);
+  caret-color: #ffffff;
+  -webkit-transition: background-color 600000s 0s, color 600000s 0s;
+  transition: background-color 600000s 0s, color 600000s 0s;
 }
 
 body {
@@ -22,6 +23,19 @@ body {
   overflow-y: hidden;
   width: 100vw;
   height: 100vh;
+}
+
+/* The auth card fades and lifts into place when the screen arrives. */
+@keyframes auth-form-enter {
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(0.98);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
 }
 
 #section-core {
@@ -36,6 +50,14 @@ body {
   height: 100%;
   margin-left: -175px;
   backdrop-filter: blur(5px) saturate(15%) brightness(35%);
+
+  /* Leaving state: JS adds this just before navigating to the other auth
+     screen so the current card dissolves out instead of cutting abruptly. */
+  &.auth-leaving {
+    opacity: 0;
+    transform: scale(0.98);
+    transition: opacity 0.3s ease, transform 0.3s ease;
+  }
 
   h2 {
     color: #fff;
@@ -53,6 +75,7 @@ body {
     border: 2px solid rgba(255, 255, 255, 0.5);
     border-radius: 20px;
     background: transparent;
+    animation: auth-form-enter 0.5s ease both;
   }
 
   .register-box {
@@ -100,7 +123,9 @@ body {
       height: 50px;
       padding: 0 35px 0 5px;
       border: none;
+      border-radius: 0;        /* drop the global input rounding (generics.css) */
       outline: none;
+      box-shadow: none;        /* drop the global inset shadow (generics.css) */
       background: transparent;
       color: #fff;
       font-size: 1em;
@@ -159,6 +184,21 @@ body {
     p a:hover {
       text-decoration: underline;
     }
+
+    /* Whole sentence is the link; only the trailing word reacts on hover. */
+    .register-link {
+      color: #fff;
+      text-decoration: none;
+
+      span {
+        font-weight: 400;
+      }
+
+      &:hover span {
+        font-weight: 600;
+        text-decoration: underline;
+      }
+    }
   }
 
   .forget {
@@ -190,5 +230,18 @@ body {
 
   .form-box {
     max-width: 90%;
+  }
+}
+
+/* Honour users who ask the OS to minimize motion: no slides, no fades. */
+@media (prefers-reduced-motion: reduce) {
+  #section-core {
+    .form-box {
+      animation: none;
+    }
+
+    &.auth-leaving {
+      transition: none;
+    }
   }
 }
