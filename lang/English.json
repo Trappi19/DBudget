@@ -157,7 +157,36 @@
         "save_success": "Settings saved successfully.",
         "username_empty": "Username cannot be empty.",
         "error_network": "Network error.",
-        "error_prefix": "Error: "
+        "error_prefix": "Error: ",
+        "contact_form": {
+            "title": "Contact us",
+            "from": "From",
+            "theme": "Topic",
+            "theme_bug": "Bug",
+            "theme_suggestion": "Suggestion",
+            "theme_question": "Question",
+            "theme_other": "Other",
+            "subject": "Subject",
+            "subject_placeholder": "Summarize your request",
+            "message": "Message",
+            "message_placeholder": "Describe your request in detail...",
+            "cancel": "Cancel",
+            "send": "Send",
+            "close": "Close",
+            "sending": "Sending...",
+            "success": "Your message has been sent successfully. We will reply by email within two business days.",
+            "error_server": "We are sorry, an unexpected error occurred. Please try again in half an hour. If the error persists, contact us directly:",
+            "subject_empty": "Subject cannot be empty.",
+            "message_empty": "Message cannot be empty.",
+            "confirmation": {
+                "subject": "[DBuget] We have received your message",
+                "heading": "Receipt confirmation",
+                "greeting": "Hello {username},",
+                "lead": "We have received your message. Our team will reply within two business days.",
+                "your_message": "Your message",
+                "footer": "Received on {date} — this is an automatic acknowledgement, please do not reply."
+            }
+        }
     },
     "error_403": {
         "title": "Error 403 - Access denied",

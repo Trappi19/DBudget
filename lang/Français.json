@@ -157,7 +157,36 @@
         "save_success": "Paramètres sauvegardés avec succès.",
         "username_empty": "Le nom d'utilisateur ne peut pas être vide.",
         "error_network": "Erreur réseau.",
-        "error_prefix": "Erreur : "
+        "error_prefix": "Erreur : ",
+        "contact_form": {
+            "title": "Nous contacter",
+            "from": "De",
+            "theme": "Thème",
+            "theme_bug": "Bug",
+            "theme_suggestion": "Suggestion",
+            "theme_question": "Question",
+            "theme_other": "Autre",
+            "subject": "Sujet",
+            "subject_placeholder": "Résumez votre demande",
+            "message": "Message",
+            "message_placeholder": "Décrivez votre demande en détail...",
+            "cancel": "Annuler",
+            "send": "Envoyer",
+            "close": "Fermer",
+            "sending": "Envoi en cours...",
+            "success": "Votre message a été envoyé avec succès, nous vous répondrons par mail sous deux jours ouvrés.",
+            "error_server": "Nous sommes désolés, une erreur inattendue est survenue. Réessayez dans une demi-heure. Si l'erreur persiste, contactez-nous directement :",
+            "subject_empty": "Le sujet ne peut pas être vide.",
+            "message_empty": "Le message ne peut pas être vide.",
+            "confirmation": {
+                "subject": "[DBuget] Nous avons bien reçu votre message",
+                "heading": "Confirmation de réception",
+                "greeting": "Bonjour {username},",
+                "lead": "Nous avons bien reçu votre message. Notre équipe vous répondra sous deux jours ouvrés.",
+                "your_message": "Votre message",
+                "footer": "Reçu le {date} — ceci est un accusé de réception automatique, merci de ne pas y répondre."
+            }
+        }
     },
     "error_403": {
         "title": "Erreur 403 - Accès refusé",

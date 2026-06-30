@@ -1,0 +1,226 @@
+/* ==========================================================================
+   contact-form.css — Contact form overlay (settings page).
+   Persistent in DOM — toggled via .contact-overlay--visible.
+   ========================================================================== */
+
+#contact-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: rgba(0, 0, 0, 0.45);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+
+  &.contact-overlay--visible {
+    opacity: 1;
+    pointer-events: all;
+
+    .contact-form {
+      transform: translateY(0) scale(1);
+      opacity: 1;
+    }
+  }
+
+  .contact-form {
+    width: 90%;
+    max-width: 480px;
+    padding: 32px 36px;
+    border-radius: 10px;
+    background-color: #fff;
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.18);
+    transform: translateY(-18px) scale(0.97);
+    opacity: 0;
+    transition: transform 0.22s ease, opacity 0.22s ease;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+
+    h2 {
+      margin: 0 0 4px;
+      color: #333;
+      font-size: 1.15em;
+    }
+
+    .contact-form__group {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+
+      label {
+        margin-top: 6px;
+        color: #666;
+        font-size: 0.85em;
+      }
+
+      input[type="text"],
+      select,
+      textarea {
+        box-sizing: border-box;
+        width: 100%;
+        padding: 7px 10px;
+        font-size: 0.95em;
+        border-radius: 5px;
+        border: 1px solid #ccc;
+        font-family: inherit;
+        resize: vertical;
+
+        &:focus {
+          outline: none;
+          border-color: #2c7be5;
+          box-shadow: 0 0 0 2px rgba(44, 123, 229, 0.15);
+        }
+
+        &:disabled {
+          background-color: #f3f3f3;
+          color: #888;
+          cursor: not-allowed;
+        }
+      }
+
+      textarea {
+        min-height: 110px;
+      }
+
+      .contact-form__counter {
+        align-self: flex-end;
+        margin-top: 2px;
+        color: #999;
+        font-size: 0.78em;
+
+        &.contact-form__counter--limit {
+          color: #e5532c;
+        }
+      }
+    }
+
+    .contact-form__actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      margin-top: 4px;
+
+      button {
+        padding: 5px 20px;
+        border-radius: 5px;
+        box-shadow: 0px 0px 3px 0px rgba(0, 0, 0, 0.5);
+        font-size: 0.9em;
+        cursor: pointer;
+        font-family: inherit;
+
+        &.contact-form__cancel {
+          background: #fff;
+          color: black;
+          border: 1px solid #0000006c;
+
+          &:hover {
+            background: #ececec;
+          }
+        }
+
+        &.contact-form__send {
+          background: #f0f5ff;
+          color: #2c7be5;
+          border: 1px solid #c0d6f5;
+
+          &:hover {
+            background: #e0ecff;
+          }
+
+          &:disabled {
+            color: #8ab4f0;
+            border-color: #dce8fb;
+            cursor: not-allowed;
+          }
+        }
+      }
+    }
+
+    /* Loading spinner */
+    .contact-form__loading {
+      display: none;
+      justify-content: center;
+      align-items: center;
+      gap: 10px;
+      color: #555;
+      font-size: 0.9em;
+      padding: 8px 0;
+
+      &.contact-form__loading--visible {
+        display: flex;
+      }
+
+      .spinner {
+        width: 20px;
+        height: 20px;
+        border: 3px solid #ddd;
+        border-top-color: #2c7be5;
+        border-radius: 50%;
+        animation: contact-spin 0.7s linear infinite;
+      }
+    }
+
+    /* Success / error state */
+    .contact-form__feedback {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      gap: 14px;
+      text-align: center;
+      padding: 12px 0;
+
+      &.contact-form__feedback--visible {
+        display: flex;
+      }
+
+      .contact-form__feedback-icon {
+        width: 48px;
+        height: 48px;
+        object-fit: contain;
+        filter: brightness(0);
+      }
+
+      p {
+        margin: 0;
+        color: #444;
+        font-size: 0.92em;
+        line-height: 1.55;
+        max-width: 340px;
+      }
+
+      button {
+        padding: 5px 20px;
+        border-radius: 5px;
+        box-shadow: 0px 0px 3px 0px rgba(0, 0, 0, 0.5);
+        border: 1px solid #0000006c;
+        background: #fff;
+        color: black;
+        font-size: 0.9em;
+        font-family: inherit;
+        cursor: pointer;
+
+        &:hover {
+          background: #ececec;
+        }
+      }
+    }
+  }
+}
+
+@keyframes contact-spin {
+  to { transform: rotate(360deg); }
+}
+
+@media (max-width: 480px) {
+  #contact-overlay {
+    padding: 0 16px;
+
+    .contact-form {
+      width: 100%;
+      padding: 24px 20px;
+    }
+  }
+}
