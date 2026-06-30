@@ -64,7 +64,7 @@
 
             <div class="contact-form__group">
                 <label for="contact-message"><?= trans('settings.contact_form.message') ?></label>
-                <textarea id="contact-message" maxlength="1000" placeholder="<?= trans('settings.contact_form.message_placeholder') ?>"></textarea>
+                <textarea id="contact-message" maxlength="10000" placeholder="<?= trans('settings.contact_form.message_placeholder') ?>"></textarea>
                 <div class="contact-form__counter"><span id="contact-message-count">0</span>/<span id="contact-message-max">0</span></div>
             </div>
 

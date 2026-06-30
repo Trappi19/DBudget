@@ -34,6 +34,8 @@ $apiRoutes = [
     '/api/v1/events'                => 'database/api/v1/events/crud.php',
 
     '/api/v1/settings'              => 'database/api/v1/settings/crud.php',
+
+    '/api/v1/contact'               => 'database/api/v1/contact/contact.php',
 ];
 
 if (isset($apiRoutes[$uri])) {

@@ -9,6 +9,7 @@ class User
     private $password;
     private $salt;
     private $lang;
+    private $account_level;
 
     public function __construct($email)
     {
@@ -27,6 +28,7 @@ class User
         $this->password = $result['password'];
         $this->salt = $result['salt'];
         $this->lang = $result['lang'] ?? 'English';
+        $this->account_level = (int)($result['account_level'] ?? 0);
     }
     public function __destruct()
     {
@@ -75,6 +77,10 @@ class User
     public function setSalt($salt)
     {
         $this->salt = $salt;
+    }
+    public function getAccountLevel(): int
+    {
+        return $this->account_level;
     }
     public function getLang()
     {
