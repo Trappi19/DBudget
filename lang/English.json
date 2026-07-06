@@ -47,7 +47,9 @@
         "update_success": "Account updated",
         "update_error": "Error updating account",
         "delete_success": "Account deleted",
-        "delete_error": "Error deleting account"
+        "delete_error": "Error deleting account",
+        "close": "Close",
+        "change_icon": "Click to change the icon"
     },
     "operations": {
         "title": "Operations",

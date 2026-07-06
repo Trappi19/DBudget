@@ -86,15 +86,16 @@ class Account
         $this->icon = $icon;
     }
 
-    public static function createAccount($label, $type, $user_email)
+    public static function createAccount($label, $type, $user_email, $icon = null)
     {
         global $db;
 
-        $query = $db->prepare('INSERT INTO bank_account (label, type, user_email) VALUES (:label, :type, :user_email)');
+        $query = $db->prepare('INSERT INTO bank_account (label, type, user_email, icon) VALUES (:label, :type, :user_email, :icon)');
         $query->execute([
             'label' => $label,
             'type' => $type,
-            'user_email' => $user_email
+            'user_email' => $user_email,
+            'icon' => $icon
         ]);
 
         return $db->lastInsertId();

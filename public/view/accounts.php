@@ -16,21 +16,33 @@
             </div>
         </ul>
 
-        <section id="create-account-field">
-            <h1><?= trans('accounts.create_account') ?></h1>
-            <input type="text" name="label" id="create-account-label" placeholder="<?= trans('accounts.label') ?>" required>
-            <input type="number" name="sold" id="create-account-sold" placeholder="100€" required>
-            <select name="type" id="create-account-type" required>
-                <option value="0"><?= trans('accounts.checking') ?></option>
-                <option value="1"><?= trans('accounts.saving') ?></option>
-            </select>
-            <div id="cancel-account">
-                <a id="create-account-2" class="valide_button noselect" onclick="create_account()"><?= trans('accounts.create_account') ?></a>
-                <a class="valide_button noselect" onclick='cancel_create_account()'><?= trans('accounts.cancel') ?></a>
-            </div>
-        </section>
+        <a id="create-account" class="valide_button noselect" onclick="open_create_account_panel()"><?= trans('accounts.create_account') ?></a>
 
-        <a id="create-account" class="valide_button noselect" onclick="create_account()"><?= trans('accounts.create_account') ?></a>
+        <div id="create-account-overlay">
+            <section id="create-account-panel">
+                <span id="create-account-close" class="noselect" onclick="close_create_account_panel()" title="<?= trans('accounts.close') ?>">&times;</span>
+
+                <h1><?= trans('accounts.create_account') ?></h1>
+
+                <div class="account-icon-preview-wrap" onclick="create_account_icon_input.click()" title="<?= trans('accounts.change_icon') ?>">
+                    <div id="create-account-icon-preview" class="account-icon-preview account-icon-preview--checking"></div>
+                    <span class="account-icon-preview__edit" aria-hidden="true"></span>
+                </div>
+                <input type="file" name="icon" id="create-account-icon-input" accept="image/*" hidden>
+
+                <input type="text" name="label" id="create-account-label" placeholder="<?= trans('accounts.label') ?>" required>
+                <input type="number" name="sold" id="create-account-sold" placeholder="100€" required>
+                <select name="type" id="create-account-type" required>
+                    <option value="0"><?= trans('accounts.checking') ?></option>
+                    <option value="1"><?= trans('accounts.saving') ?></option>
+                </select>
+
+                <div id="cancel-account">
+                    <a id="create-account-2" class="valide_button noselect" onclick="create_account()"><?= trans('accounts.create_account') ?></a>
+                    <a class="valide_button noselect" onclick='cancel_create_account()'><?= trans('accounts.cancel') ?></a>
+                </div>
+            </section>
+        </div>
 
         <b id="total-sold"><?= trans('accounts.total') ?>: 0.00 €</b>
     </section>

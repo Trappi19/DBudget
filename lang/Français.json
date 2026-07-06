@@ -47,7 +47,9 @@
         "update_success": "Compte mis à jour",
         "update_error": "Erreur lors de la mise à jour du compte",
         "delete_success": "Compte supprimé",
-        "delete_error": "Erreur lors de la suppression du compte"
+        "delete_error": "Erreur lors de la suppression du compte",
+        "close": "Fermer",
+        "change_icon": "Cliquez pour changer l'icône"
     },
     "operations": {
         "title": "Opérations",

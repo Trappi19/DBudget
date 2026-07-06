@@ -37,6 +37,11 @@ function sanitize_body(array $body): array
             $result[$key] = null;
             continue;
         }
+        if ($key === 'icon') {
+            // Base64 image data URI: keep as-is, just raise the length cap well above the default 2000 chars
+            $result[$key] = is_string($value) ? sanitize_string($value, 5000000) : false;
+            continue;
+        }
         if (is_int($value) || (is_numeric($value) && !str_contains((string)$value, '.'))) {
             $result[$key] = sanitize_int($value);
         } elseif (is_float($value) || (is_numeric($value) && str_contains((string)$value, '.'))) {

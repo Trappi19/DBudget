@@ -3,10 +3,24 @@ const datasheet = document.getElementById("datasheet");
 const date = document.getElementById("date");
 const amount = document.getElementById("amount");
 const label = document.getElementById("label");
-const create_account_field = document.getElementById("create-account-field");
 const create_account_button = document.getElementById("create-account");
+const create_account_overlay = document.getElementById("create-account-overlay");
+const create_account_panel = document.getElementById("create-account-panel");
+const create_account_icon_input = document.getElementById("create-account-icon-input");
+const create_account_icon_preview = document.getElementById("create-account-icon-preview");
+const create_account_type = document.getElementById("create-account-type");
 const total_sold = document.getElementById("total-sold");
 let transfer_data = [null, null];
+let create_account_icon_base64 = null;
+
+create_account_type.addEventListener("change", update_create_account_icon_type);
+create_account_icon_input.addEventListener("change", handle_create_account_icon_upload);
+create_account_overlay.addEventListener("click", (event) => {
+    if (event.target === create_account_overlay) close_create_account_panel();
+});
+document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape" && create_account_overlay.classList.contains("is-visible")) close_create_account_panel();
+});
 
 function f_onload() { onload(); }
 
@@ -207,48 +221,101 @@ function undo_transfer() {
     amount.value = "";
 }
 
-function create_account() {
-    if (create_account_field.style.display != "block") {
-        create_account_field.style.display = "block";
-        create_account_button.style.display = "none";
-    }
-    else {
-        const acc_label = document.getElementById("create-account-label");
-        const acc_type = document.getElementById("create-account-type");
-        const acc_sold = document.getElementById("create-account-sold");
+function open_create_account_panel() {
+    create_account_overlay.style.display = "flex";
+    requestAnimationFrame(() => {
+        create_account_overlay.classList.add("is-visible");
+        create_account_panel.classList.add("is-visible");
+    });
+}
 
-        if (acc_label.value == "" || acc_type.value == "") {
-            new_toast(trans('accounts.fill_fields'), "warn");
+function close_create_account_panel() {
+    create_account_overlay.classList.remove("is-visible");
+    create_account_panel.classList.remove("is-visible");
+
+    create_account_panel.addEventListener("transitionend", () => {
+        create_account_overlay.style.display = "none";
+    }, { once: true });
+
+    reset_create_account_form();
+}
+
+function reset_create_account_form() {
+    document.getElementById("create-account-label").value = "";
+    document.getElementById("create-account-sold").value = "";
+    create_account_type.value = "0";
+    create_account_icon_input.value = "";
+    create_account_icon_base64 = null;
+    create_account_icon_preview.innerHTML = "";
+    create_account_icon_preview.classList.remove("account-icon-preview--image");
+    update_create_account_icon_type();
+}
+
+function update_create_account_icon_type() {
+    create_account_icon_preview.classList.remove("account-icon-preview--checking", "account-icon-preview--savings");
+    create_account_icon_preview.classList.add(create_account_type.value == "1" ? "account-icon-preview--savings" : "account-icon-preview--checking");
+}
+
+function handle_create_account_icon_upload() {
+    const file = create_account_icon_input.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (event) => {
+        const img = new Image();
+        img.onload = () => {
+            const size = 128;
+            const canvas = document.createElement("canvas");
+            canvas.width = size;
+            canvas.height = size;
+            const ctx = canvas.getContext("2d");
+
+            const scale = Math.max(size / img.width, size / img.height);
+            const w = img.width * scale;
+            const h = img.height * scale;
+            ctx.drawImage(img, (size - w) / 2, (size - h) / 2, w, h);
+
+            create_account_icon_base64 = canvas.toDataURL("image/jpeg", 0.85);
+            create_account_icon_preview.innerHTML = `<img src="${create_account_icon_base64}" alt="icon">`;
+            create_account_icon_preview.classList.add("account-icon-preview--image");
+        };
+        img.src = event.target.result;
+    };
+    reader.readAsDataURL(file);
+}
+
+function create_account() {
+    const acc_label = document.getElementById("create-account-label");
+    const acc_type = create_account_type;
+    const acc_sold = document.getElementById("create-account-sold");
+
+    if (acc_label.value == "" || acc_type.value == "") {
+        new_toast(trans('accounts.fill_fields'), "warn");
+        return;
+    }
+
+    if (acc_sold.value == "") {
+        acc_sold.value = 0;
+    }
+
+    var xhr = new XMLHttpRequest();
+    xhr.open("POST", `/api/v1/accounts`, true);
+    xhr.setRequestHeader("Content-Type", "application/json");
+    xhr.onload = () => {
+        if (Math.floor(xhr.status / 100) === 2) {
+            new_toast(trans('accounts.create_success'), "success");
+            onload();
+            close_create_account_panel();
         }
         else {
-            if (acc_sold.value == "") {
-                acc_sold.value = 0;
-            }
-
-            var xhr = new XMLHttpRequest();
-            xhr.open("POST", `/api/v1/accounts`, true);
-            xhr.setRequestHeader("Content-Type", "application/json");
-            xhr.onload = () => {
-                if (Math.floor(xhr.status / 100) === 2) {
-                    new_toast(trans('accounts.create_success'), "success");
-                    acc_label.value = "";
-                    acc_sold.value = "";
-                    onload();
-                    create_account_field.style.display = "none";
-                    create_account_button.style.display = "";
-                }
-                else {
-                    new_toast(trans('accounts.create_error'), "error")
-                }
-            }
-            xhr.send(JSON.stringify({ label: acc_label.value, type: acc_type.value, sold: acc_sold.value }));
+            new_toast(trans('accounts.create_error'), "error")
         }
     }
+    xhr.send(JSON.stringify({ label: acc_label.value, type: acc_type.value, sold: acc_sold.value, icon: create_account_icon_base64 }));
 }
 
 function cancel_create_account() {
-    create_account_field.style.display = "none";
-    create_account_button.style.display = "";
+    close_create_account_panel();
 }
 
 function edit_element(event, id, element) {

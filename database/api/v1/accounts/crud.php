@@ -41,8 +41,9 @@ if ($method === 'GET') {
 if ($method === 'POST') {
     ['label' => $label, 'type' => $type] = checkRequiredArg($body, ['label', 'type']);
     $sold = $body['sold'] ?: 0;
+    $icon = $body['icon'] ?? null;
 
-    $id_account = Account::createAccount($label, $type, $_SESSION['email']);
+    $id_account = Account::createAccount($label, $type, $_SESSION['email'], $icon);
 
     if ($sold != 0) {
         Operation::createOperation("Init " . $label . " sold", "1999-01-01", $sold, 6, 0, $id_account);
