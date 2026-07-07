@@ -49,7 +49,9 @@
         "delete_success": "Account deleted",
         "delete_error": "Error deleting account",
         "close": "Close",
-        "change_icon": "Click to change the icon"
+        "change_icon": "Click to change the icon",
+        "edit_account": "Edit account",
+        "save": "Save"
     },
     "operations": {
         "title": "Operations",

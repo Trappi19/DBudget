@@ -22,7 +22,7 @@
             <section id="create-account-panel">
                 <span id="create-account-close" class="noselect" onclick="close_create_account_panel()" title="<?= trans('accounts.close') ?>">&times;</span>
 
-                <h1><?= trans('accounts.create_account') ?></h1>
+                <h1 id="create-account-title"><?= trans('accounts.create_account') ?></h1>
 
                 <div class="account-icon-preview-wrap" onclick="create_account_icon_input.click()" title="<?= trans('accounts.change_icon') ?>">
                     <div id="create-account-icon-preview" class="account-icon-preview account-icon-preview--checking"></div>

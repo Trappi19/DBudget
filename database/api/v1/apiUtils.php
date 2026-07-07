@@ -37,11 +37,6 @@ function sanitize_body(array $body): array
             $result[$key] = null;
             continue;
         }
-        if ($key === 'icon') {
-            // Base64 image data URI: keep as-is, just raise the length cap well above the default 2000 chars
-            $result[$key] = is_string($value) ? sanitize_string($value, 5000000) : false;
-            continue;
-        }
         if (is_int($value) || (is_numeric($value) && !str_contains((string)$value, '.'))) {
             $result[$key] = sanitize_int($value);
         } elseif (is_float($value) || (is_numeric($value) && str_contains((string)$value, '.'))) {
@@ -79,6 +74,41 @@ function sanitize_date(mixed $value): string
     if (!is_string($value)) return false;
     $d = DateTime::createFromFormat('Y-m-d', $value);
     if (!$d || $d->format('Y-m-d') !== $value) sendAPIResponse(400, 'Invalid date format (expected Y-m-d) - [' . $value . ']', []);
+    return $value;
+}
+
+/**
+ * Validate an account icon: an optional base64 image data URI.
+ * On invalid input, responds with an explicit error so the caller knows what went wrong.
+ *
+ * @param mixed $value
+ * @return string|null The validated data URI, or null when no icon is provided.
+ */
+function sanitize_icon(mixed $value): ?string
+{
+    if ($value === null || $value === '') {
+        return null;
+    }
+    if (!is_string($value)) {
+        sendAPIResponse(400, 'Invalid icon: must be a base64 image data URI', []);
+    }
+
+    $value = trim($value);
+
+    if (strlen($value) > 5000000) {
+        sendAPIResponse(413, 'Invalid icon: image is too large (max ~5MB)', []);
+    }
+
+    // Expected shape: data:image/<type>;base64,<payload>
+    if (!preg_match('#^data:image/[a-zA-Z0-9.+-]+;base64,#', $value)) {
+        sendAPIResponse(400, 'Invalid icon: expected a base64 image data URI (data:image/...;base64,...)', []);
+    }
+
+    $payload = explode(',', $value, 2)[1] ?? '';
+    if ($payload === '' || base64_decode($payload, true) === false) {
+        sendAPIResponse(400, 'Invalid icon: payload is not valid base64', []);
+    }
+
     return $value;
 }
 

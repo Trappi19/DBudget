@@ -10,8 +10,10 @@ const create_account_icon_input = document.getElementById("create-account-icon-i
 const create_account_icon_preview = document.getElementById("create-account-icon-preview");
 const create_account_type = document.getElementById("create-account-type");
 const total_sold = document.getElementById("total-sold");
+const account_panel_title = document.getElementById("create-account-title");
+const account_panel_confirm = document.getElementById("create-account-2");
 let transfer_data = [null, null];
-let create_account_icon_base64 = null;
+let accounts_data = [];
 
 create_account_type.addEventListener("change", update_create_account_icon_type);
 create_account_icon_input.addEventListener("change", handle_create_account_icon_upload);
@@ -53,6 +55,7 @@ onload = () => {
     xhr.onload = () => {
         if (Math.floor(xhr.status / 100) === 2) {
             let accounts = JSON.parse(xhr.responseText).data;
+            accounts_data = accounts;
 
             if (accounts.length == 0) {
                 datasheet.innerHTML = `<li class="table-row">
@@ -75,7 +78,7 @@ onload = () => {
                         <div class="col col-3" data-label="${trans('table.type')}">${account.type ? trans('accounts.saving_account') : trans('accounts.checking_account')}</div>
 
                         <div class="col col-4" data-label="${trans('table.actions')}">
-                            <img src="/assets/images/edit.png" alt="edit" class="card-button" onclick="edit_element(event, ${account.id_account}, this)">
+                            <img src="/assets/images/edit.png" alt="edit" class="card-button" onclick="edit_element(event, ${account.id_account})">
                             <img src="/assets/images/trash.png" alt="delete" class="card-button" onclick="confirm_popup_delete_element(event, ${account.id_account}, '${account.label}')">
                         </div>
                     </tr>`;
@@ -222,6 +225,36 @@ function undo_transfer() {
 }
 
 function open_create_account_panel() {
+    reset_create_account_form();
+    account_panel_title.textContent = trans('accounts.create_account');
+    account_panel_confirm.textContent = trans('accounts.create_account');
+    show_account_panel();
+}
+
+function edit_element(event, id) {
+    event.stopPropagation();
+
+    const account = accounts_data.find(a => a.id_account == id);
+    if (!account) return;
+
+    reset_create_account_form();
+    create_account_panel.dataset.editingId = id;
+    document.getElementById("create-account-label").value = account.label;
+    document.getElementById("create-account-sold").value = account.sold;
+    create_account_type.value = account.type;
+    update_create_account_icon_type();
+
+    if (account.icon) {
+        create_account_icon_preview.innerHTML = `<img src="${account.icon}" alt="icon">`;
+        create_account_icon_preview.classList.add("account-icon-preview--image");
+    }
+
+    account_panel_title.textContent = trans('accounts.edit_account');
+    account_panel_confirm.textContent = trans('accounts.save');
+    show_account_panel();
+}
+
+function show_account_panel() {
     create_account_overlay.style.display = "flex";
     requestAnimationFrame(() => {
         create_account_overlay.classList.add("is-visible");
@@ -245,7 +278,7 @@ function reset_create_account_form() {
     document.getElementById("create-account-sold").value = "";
     create_account_type.value = "0";
     create_account_icon_input.value = "";
-    create_account_icon_base64 = null;
+    delete create_account_panel.dataset.editingId;
     create_account_icon_preview.innerHTML = "";
     create_account_icon_preview.classList.remove("account-icon-preview--image");
     update_create_account_icon_type();
@@ -254,6 +287,12 @@ function reset_create_account_form() {
 function update_create_account_icon_type() {
     create_account_icon_preview.classList.remove("account-icon-preview--checking", "account-icon-preview--savings");
     create_account_icon_preview.classList.add(create_account_type.value == "1" ? "account-icon-preview--savings" : "account-icon-preview--checking");
+}
+
+// The icon preview is the source of truth: read the base64 straight from it, no global to keep in sync
+function get_create_account_icon() {
+    const img = create_account_icon_preview.querySelector("img");
+    return img ? img.src : null;
 }
 
 function handle_create_account_icon_upload() {
@@ -275,8 +314,8 @@ function handle_create_account_icon_upload() {
             const h = img.height * scale;
             ctx.drawImage(img, (size - w) / 2, (size - h) / 2, w, h);
 
-            create_account_icon_base64 = canvas.toDataURL("image/jpeg", 0.85);
-            create_account_icon_preview.innerHTML = `<img src="${create_account_icon_base64}" alt="icon">`;
+            const dataURL = canvas.toDataURL("image/jpeg", 0.85);
+            create_account_icon_preview.innerHTML = `<img src="${dataURL}" alt="icon">`;
             create_account_icon_preview.classList.add("account-icon-preview--image");
         };
         img.src = event.target.result;
@@ -298,68 +337,44 @@ function create_account() {
         acc_sold.value = 0;
     }
 
+    const editing_id = create_account_panel.dataset.editingId || null;
+    const icon_base64 = get_create_account_icon();
+
     var xhr = new XMLHttpRequest();
-    xhr.open("POST", `/api/v1/accounts`, true);
-    xhr.setRequestHeader("Content-Type", "application/json");
-    xhr.onload = () => {
-        if (Math.floor(xhr.status / 100) === 2) {
-            new_toast(trans('accounts.create_success'), "success");
-            onload();
-            close_create_account_panel();
-        }
-        else {
-            new_toast(trans('accounts.create_error'), "error")
-        }
-    }
-    xhr.send(JSON.stringify({ label: acc_label.value, type: acc_type.value, sold: acc_sold.value, icon: create_account_icon_base64 }));
-}
-
-function cancel_create_account() {
-    close_create_account_panel();
-}
-
-function edit_element(event, id, element) {
-    event.stopPropagation();
-    card = element.parentNode.parentNode;
-    card.classList.add("editing-row");
-
-    card.onclick = "";
-    card.innerHTML = `
-        <input class="col col-1" data-label="${trans('table.label')}" value="${card.querySelector(".account-label").innerHTML}" />
-        <input class="col col-2" data-label="${trans('table.sold')}" type="number" value="${card.children[1].innerHTML.slice(0, -3)}" />
-        <select class="col col-3" data-label="${trans('table.type')}">
-            <option value="0">${trans('accounts.checking_account')}</option>
-            <option value="1" ${card.children[2].innerHTML == trans('accounts.saving_account') ? "selected" : ""}>${trans('accounts.saving_account')}</option>
-        </select>
-        <div class="col col-4" data-label="${trans('table.actions')}">
-            <img src="/assets/images/confirm.png" alt="confirm" class="card-button" onclick='confirm_edit_element(this.parentNode.parentNode.children[0].value, this.parentNode.parentNode.children[1].value, this.parentNode.parentNode.children[2].value, ${id})'>
-            <img src="/assets/images/cancel.png" alt="cancel" class="card-button" onclick="f_onload()">
-        </div>`;
-
-    setTimeout(() => {
-        undo_transfer();
-    }, 1);
-}
-
-function confirm_edit_element(label, sold, type, id) {
-    if (label == "" || type == "" || sold == "") {
-        new_toast(trans('accounts.fill_fields'), "warn");
-    }
-    else {
-        var xhr = new XMLHttpRequest();
+    if (editing_id != null) {
         xhr.open("PATCH", `/api/v1/accounts`, true);
         xhr.setRequestHeader("Content-Type", "application/json");
         xhr.onload = () => {
             if (Math.floor(xhr.status / 100) === 2) {
                 new_toast(trans('accounts.update_success'), "success");
                 onload();
+                close_create_account_panel();
             }
             else {
                 new_toast(trans('accounts.update_error'), "error")
             }
         }
-        xhr.send(JSON.stringify({ id, label, sold, type }));
+        xhr.send(JSON.stringify({ id: editing_id, label: acc_label.value, type: acc_type.value, sold: acc_sold.value, icon: icon_base64 }));
     }
+    else {
+        xhr.open("POST", `/api/v1/accounts`, true);
+        xhr.setRequestHeader("Content-Type", "application/json");
+        xhr.onload = () => {
+            if (Math.floor(xhr.status / 100) === 2) {
+                new_toast(trans('accounts.create_success'), "success");
+                onload();
+                close_create_account_panel();
+            }
+            else {
+                new_toast(trans('accounts.create_error'), "error")
+            }
+        }
+        xhr.send(JSON.stringify({ label: acc_label.value, type: acc_type.value, sold: acc_sold.value, icon: icon_base64 }));
+    }
+}
+
+function cancel_create_account() {
+    close_create_account_panel();
 }
 
 function confirm_popup_delete_element(event, id, label) {

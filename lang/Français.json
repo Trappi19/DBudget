@@ -49,7 +49,9 @@
         "delete_success": "Compte supprimé",
         "delete_error": "Erreur lors de la suppression du compte",
         "close": "Fermer",
-        "change_icon": "Cliquez pour changer l'icône"
+        "change_icon": "Cliquez pour changer l'icône",
+        "edit_account": "Modifier un compte",
+        "save": "Enregistrer"
     },
     "operations": {
         "title": "Opérations",
