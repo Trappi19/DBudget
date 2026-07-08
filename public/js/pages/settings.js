@@ -6,6 +6,22 @@ onload = () => {
         localStorage.removeItem("settings_saved");
         new_toast(trans("settings.save_success"), "success");
     }
+
+    const contactOverlay = document.getElementById("contact-overlay");
+    let pressStartedOnBackdrop = false;
+    contactOverlay.addEventListener("mousedown", (e) => {
+        pressStartedOnBackdrop = e.target === contactOverlay;
+    });
+    contactOverlay.addEventListener("click", (e) => {
+        if (pressStartedOnBackdrop && e.target === contactOverlay) {
+            closeContactForm();
+        }
+    });
+
+    const contactMessage = document.getElementById("contact-message");
+    document.getElementById("contact-message-max").textContent = contactMessage.maxLength;
+    contactMessage.addEventListener("input", contactUpdateCounter);
+    contactUpdateCounter();
 }
 
 function saveSettings() {
