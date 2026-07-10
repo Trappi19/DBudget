@@ -28,22 +28,28 @@ if ($method === 'GET') {
             sendAPIResponse(404, 'Operation not found', []);
         }
 
+        if (!Auth::ownsAccount((int) $result['id_account'])) {
+            sendAPIResponse(403, 'Forbidden', []);
+        }
+
         sendAPIResponse(200, 'OK', $result);
     }
 
     // GET /api/v1/operations?accounts=[...]&date=...&limit=...&label=...&category=...&regularity=...
-    $accounts = json_decode($_GET['accounts'] ?? '[]');
-    $date = sanitize_date($_GET['date'] ?? date('Y-m-d'));
-    $where = 'WHERE id_account IN (' . implode(',', array_fill(0, count($accounts), '?')) . ') AND date <= ?';
-    $params = array_merge($accounts, [$date]);
-    $limit = isset($_GET['limit']) ? ' LIMIT ' . (int)$_GET['limit'] : '';
+    // Keep only the accounts the caller actually owns (defence against IDOR).
+    $accounts = array_values(array_filter(
+        array_map('intval', (array) json_decode($_GET['accounts'] ?? '[]')),
+        fn($a) => Auth::ownsAccount($a)
+    ));
 
     if (empty($accounts)) {
         sendAPIResponse(200, 'OK', []);
     }
-    foreach ($accounts as $account) {
-        $account = sanitize_int($account ?? 0);
-    }
+
+    $date = sanitize_date($_GET['date'] ?? date('Y-m-d'));
+    $limit = isset($_GET['limit']) ? ' LIMIT ' . (int)$_GET['limit'] : '';
+    $where = 'WHERE id_account IN (' . implode(',', array_fill(0, count($accounts), '?')) . ') AND date <= ?';
+    $params = array_merge($accounts, [$date]);
 
     if (isset($_GET['regularity'])) {
         $regularity = sanitize_int($_GET['regularity']);
@@ -74,6 +80,10 @@ if ($method === 'GET') {
 if ($method === 'POST') {
     ['label' => $label, 'date' => $date, 'amount' => $amount, 'category' => $category, 'id_account' => $id_account] = checkRequiredArg($body, ['label', 'date', 'amount', 'category', 'id_account']);
 
+    if (!Auth::ownsAccount((int) $id_account)) {
+        sendAPIResponse(403, 'Forbidden', []);
+    }
+
     $date = sanitize_date($date ?? '');
     Operation::createOperation($label, $date, $amount, $category, 0, $id_account);
 
@@ -84,6 +94,17 @@ checkRequiredArg(['id' => $id], ['id']);
 
 // DELETE /api/v1/operations
 if ($method === 'DELETE') {
+    $query = $db->prepare('SELECT id_account FROM operation WHERE id_operation = :id');
+    $query->execute(['id' => $id]);
+    $op = $query->fetch(PDO::FETCH_ASSOC);
+
+    if (!$op) {
+        sendAPIResponse(404, 'Operation not found', []);
+    }
+    if (!Auth::ownsAccount((int) $op['id_account'])) {
+        sendAPIResponse(403, 'Forbidden', []);
+    }
+
     Operation::deleteOperation($id);
 
     sendAPIResponse(200, 'Operation deleted', []);

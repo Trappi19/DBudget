@@ -6,7 +6,7 @@ require_once $_SERVER['DOCUMENT_ROOT'] . '/database/tables/operation_type.php';
 
 requireLogin();
 
-$accounts = Account::getAccountsByUser($_SESSION['email']);
+$accounts = Account::getAccountsByUser(Auth::email());
 $operation_types = OperationType::getAll();
 
 $title = trans('operations.title');

@@ -15,8 +15,12 @@ if ($method === 'GET') {
 
     if ($id != null) {
 
+        if (!Auth::ownsAccount((int) $id)) {
+            sendAPIResponse(403, 'Forbidden', []);
+        }
+
         $query = $db->prepare('SELECT id_account, label, type FROM bank_account WHERE id_account = :id AND user_email = :email');
-        $query->execute(['id' => $id, 'email' => $_SESSION['email']]);
+        $query->execute(['id' => $id, 'email' => Auth::email()]);
         $result = $query->fetch(PDO::FETCH_ASSOC);
 
         if (!$result) {
@@ -27,7 +31,7 @@ if ($method === 'GET') {
         sendAPIResponse(200, 'OK', $result);
     } else {
 
-        $result = Account::getAccountsByUser($_SESSION['email']);
+        $result = Account::getAccountsByUser(Auth::email());
 
         foreach ($result as $key => $value) {
             $result[$key]['sold'] = Operation::getLastOperationSoldByAccount($value['id_account'], date('Y-m-d'));
@@ -42,11 +46,14 @@ if ($method === 'POST') {
     ['label' => $label, 'type' => $type] = checkRequiredArg($body, ['label', 'type']);
     $sold = $body['sold'] ?: 0;
 
-    $id_account = Account::createAccount($label, $type, $_SESSION['email']);
+    $id_account = Account::createAccount($label, $type, Auth::email());
 
     if ($sold != 0) {
         Operation::createOperation("Init " . $label . " sold", "1999-01-01", $sold, 6, 0, $id_account);
     }
+
+    // The owned-accounts list changed: re-issue the token so its `acc` claim stays fresh.
+    Auth::refresh();
 
     sendAPIResponse(201, 'Account created', []);
 }
@@ -55,6 +62,10 @@ if ($method === 'POST') {
 if ($method === 'PATCH') {
 
     ['id' => $id, 'label' => $label, 'type' => $type, 'sold' => $sold] = checkRequiredArg($body, ['id', 'label', 'type', 'sold']);
+
+    if (!Auth::ownsAccount((int) $id)) {
+        sendAPIResponse(403, 'Forbidden', []);
+    }
 
     $account = new Account($id);
     $account->setLabel($label);
@@ -75,7 +86,15 @@ if ($method === 'PATCH') {
 if ($method === 'DELETE') {
     ['id' => $id] = checkRequiredArg($body, ['id']);
 
+    if (!Auth::ownsAccount((int) $id)) {
+        sendAPIResponse(403, 'Forbidden', []);
+    }
+
     Account::deleteAccount($id);
+
+    // The owned-accounts list changed: re-issue the token so its `acc` claim stays fresh.
+    Auth::refresh();
+
     sendAPIResponse(200, 'Account deleted', []);
 }
 

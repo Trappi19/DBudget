@@ -17,6 +17,10 @@ if ($amount == 0 || $from_id == $to_id) {
     sendAPIResponse(201, 'No transaction created', []);
 }
 
+if (!Auth::ownsAccount((int) $from_id) || !Auth::ownsAccount((int) $to_id)) {
+    sendAPIResponse(403, 'Forbidden', []);
+}
+
 $from = new Account($from_id);
 $to = new Account($to_id);
 

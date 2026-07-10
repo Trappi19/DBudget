@@ -4,8 +4,9 @@
 <section id="section-core">
     <div class="form-box">
         <div class="form-value">
-            <form action="/app/login" method="get">
+            <form action="/app/login" method="post">
                 <h2>Login</h2>
+                <input type="hidden" name="redirect" value="<?= htmlspecialchars($_GET['redirect'] ?? '', ENT_QUOTES) ?>">
                 <div class="input-box">
                     <ion-icon name="mail-outline"></ion-icon>
                     <input id="email_id" type="email" name="input_email" required placeholder=" ">

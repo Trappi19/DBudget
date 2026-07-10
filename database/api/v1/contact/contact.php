@@ -29,7 +29,7 @@ if (mb_strlen($message) > 10000) {
     sendAPIResponse(422, 'Message too long', []);
 }
 
-$userEmail = $_SESSION['email'];
+$userEmail = Auth::email();
 $user = new User($userEmail);
 
 // Coerce false (unset var) to '' so a missing config fails through the generic
@@ -57,7 +57,7 @@ try {
 }
 
 try {
-    // Acknowledge in the language the user picked (trans() reads $_SESSION['lang']).
+    // Acknowledge in the language the user picked (trans() reads the DB-backed locale).
     $confirmSubject = $headerSafe(trans('settings.contact_form.confirmation.subject'));
     $confirmHtml = buildConfirmationMailHtml($username, $theme, $subject, $message, $sentAt);
     $confirmText = buildConfirmationMailText($username, $theme, $subject, $message, $sentAt);

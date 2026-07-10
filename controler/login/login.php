@@ -1,19 +1,16 @@
 <?php
 
 require_once($_SERVER['DOCUMENT_ROOT'] . '/database/tables/user.php');
+require_once($_SERVER['DOCUMENT_ROOT'] . '/controler/helpers/auth.php');
 
-if (session_status() !== PHP_SESSION_ACTIVE) session_start();
 $title = "Login";
-if (isset($_GET['input_email']) && isset($_GET['input_password'])) {
-    $email = $_GET['input_email'];
-    $password = $_GET['input_password'];
+if (isset($_POST['input_email']) && isset($_POST['input_password'])) {
+    $email = $_POST['input_email'];
+    $password = $_POST['input_password'];
 
     if (User::checkLogin($email, $password)) {
-        $user = new User($email);
-        $_SESSION['email'] = $email;
-        $_SESSION['username'] = $user->getUsername();
-        $_SESSION['lang'] = $user->getLang();
-        header("Location: " . ($_SESSION['redirect'] ?? '/app/home'));
+        Auth::issueForUser($email);
+        header("Location: " . login_redirect_target());
         exit();
     } else {
         $error = 1;

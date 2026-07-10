@@ -8,8 +8,8 @@ requireLogin();
 $title = trans('settings.title');
 $page_name = trans('settings.nav');
 
-$username = $_SESSION['username'] ?? '';
-$email = $_SESSION['email'] ?? '';
+$username = current_username();
+$email = Auth::email() ?? '';
 $mail_contact = getenv('MAIL_CONTACT') ?: '';
 
 $languages = get_available_languages();

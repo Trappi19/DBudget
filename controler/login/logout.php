@@ -1,6 +1,7 @@
 <?php
 
-if (session_status() !== PHP_SESSION_ACTIVE) session_start();
-if (session_destroy()) {
-    header("Location: /app/login");
-}
+require_once($_SERVER['DOCUMENT_ROOT'] . '/controler/helpers/auth.php');
+
+Auth::clear();
+header("Location: /app/login");
+exit();

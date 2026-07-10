@@ -11,6 +11,10 @@ $date = $_GET['date'] ?? date('Y-m-d');
 
 checkRequiredArg(['id_account' => $id], ['id_account']);
 
+if (!Auth::ownsAccount((int) $id)) {
+    sendAPIResponse(403, 'Forbidden', []);
+}
+
 $balance = Operation::getLastOperationSoldByAccount($id, $date);
 
 sendAPIResponse(200, 'OK', ['balance' => $balance]);

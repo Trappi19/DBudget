@@ -31,7 +31,7 @@ require_once $_SERVER['DOCUMENT_ROOT'] . '/controler/helpers/lang.php'; ?>
 
 			<div id="account">
 				<a id="username">
-					<?= htmlspecialchars($_SESSION['username'] ?? '') ?>
+					<?= htmlspecialchars(current_username()) ?>
 				</a>
 				<a href="/app/logout">
 					<img id="exit_icon" src="/assets/images/exit.png" alt="exit" width="50" height="50" loading="lazy">
